@@ -32,11 +32,12 @@ Build for production with `npm run build` (outputs to `build/`).
   ready with a single button press - **no PIN involved**.
 - **`/admin`** — now a landing page of its own, linking out to each report/tool individually
   instead of everything being squeezed onto one screen:
+  - `/admin/sales` — revenue totals for today/this week/this month, plus a day/week/month breakdown
   - `/admin/pins` — forgot-PIN lookup
   - `/admin/delivery-times` — avg. time-to-close per waiter
   - `/admin/best-sellers` — most-ordered items by date range
   - `/admin/low-stock` — items below the stock threshold (live via Socket.io)
-  - `/admin/history` — full order history with timestamps
+  - `/admin/history` — full order history with placed, kitchen-ready, bar-ready, and closed timestamps
   - `/admin/quick-add` — add a menu item, waiter, or table, and delete a menu item that's no
     longer being sold (e.g. after it's permanently out of stock)
 
