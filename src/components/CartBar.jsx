@@ -1,5 +1,3 @@
-import { motion } from "framer-motion";
-
 export default function CartBar({ cart = [], onRemove, onPlaceOrder, placing }) {
   // Ensure cart is always an array
   const safeCart = Array.isArray(cart) ? cart : [];
