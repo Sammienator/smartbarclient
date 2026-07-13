@@ -89,3 +89,4 @@ differences are plumbing:
   app is trust-based - anyone at that device can pick any waiter's name. Fine for a single shared
   tablet per station; worth revisiting if waiters use personal devices.
 # smartbarclient
+# smartbarclient
