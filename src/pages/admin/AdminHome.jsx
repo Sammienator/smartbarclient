@@ -1,11 +1,12 @@
 import { Link } from "react-router-dom";
 
 const LINKS = [
+  { to: "/admin/sales", label: "Sales", desc: "Revenue totals by day, week, and month" },
   { to: "/admin/pins", label: "Order PINs", desc: "Forgot-PIN lookup for any active order" },
   { to: "/admin/delivery-times", label: "Delivery times", desc: "Avg. time to close, per waiter" },
   { to: "/admin/best-sellers", label: "Best sellers", desc: "Most-ordered items in a date range" },
   { to: "/admin/low-stock", label: "Low stock", desc: "Items below the stock threshold" },
-  { to: "/admin/history", label: "Order history", desc: "Every completed order, with timestamps" },
+  { to: "/admin/history", label: "Order history", desc: "Every completed order, with prep and close timestamps" },
   { to: "/admin/quick-add", label: "Quick add", desc: "Add a menu item, waiter, or table" },
 ];
 

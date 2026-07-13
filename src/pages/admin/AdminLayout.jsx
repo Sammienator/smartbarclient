@@ -3,6 +3,7 @@ import NavBar from "../../components/NavBar";
 
 const SECTION_TITLES = {
   "": "Admin dashboard",
+  sales: "Sales",
   pins: "Order PINs",
   "delivery-times": "Delivery times",
   "best-sellers": "Best sellers",

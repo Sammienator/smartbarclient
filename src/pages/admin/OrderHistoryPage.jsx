@@ -2,6 +2,10 @@ import { useEffect, useState } from "react";
 import api from "../../lib/api";
 import Section from "../../components/Section";
 
+function timeCell(value) {
+  return value ? new Date(value).toLocaleString() : "—";
+}
+
 export default function OrderHistoryPage() {
   const [orders, setOrders] = useState([]);
   const [start, setStart] = useState("");
@@ -19,7 +23,8 @@ export default function OrderHistoryPage() {
   return (
     <Section title="Order history">
       <p className="text-xs text-ink/40 mb-3">
-        A permanent record of every completed order, most recent first, with the time it was placed and the time it was closed out.
+        A permanent record of every completed order, most recent first — when it was placed, when
+        the kitchen and bar each finished prepping their side, and when the waiter closed it out.
       </p>
       <div className="flex gap-2 mb-4 items-end">
         <label className="text-xs text-ink/50">
@@ -44,6 +49,8 @@ export default function OrderHistoryPage() {
                 <th className="pb-2">Items</th>
                 <th className="pb-2">Total</th>
                 <th className="pb-2">Placed</th>
+                <th className="pb-2">Kitchen ready</th>
+                <th className="pb-2">Bar ready</th>
                 <th className="pb-2">Closed</th>
               </tr>
             </thead>
@@ -56,12 +63,10 @@ export default function OrderHistoryPage() {
                     {o.items.map((it) => `${it.quantity}× ${it.name}`).join(", ")}
                   </td>
                   <td className="py-2 font-mono text-ink/70">KES {o.totalAmount}</td>
-                  <td className="py-2 font-mono text-ink/50 text-xs">
-                    {new Date(o.placedAt).toLocaleString()}
-                  </td>
-                  <td className="py-2 font-mono text-ink/50 text-xs">
-                    {new Date(o.completedAt).toLocaleString()}
-                  </td>
+                  <td className="py-2 font-mono text-ink/50 text-xs">{timeCell(o.placedAt)}</td>
+                  <td className="py-2 font-mono text-ink/50 text-xs">{timeCell(o.kitchenReadyAt)}</td>
+                  <td className="py-2 font-mono text-ink/50 text-xs">{timeCell(o.barReadyAt)}</td>
+                  <td className="py-2 font-mono text-ink/50 text-xs">{timeCell(o.completedAt)}</td>
                 </tr>
               ))}
             </tbody>
