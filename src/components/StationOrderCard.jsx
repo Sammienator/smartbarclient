@@ -21,7 +21,7 @@ export default function StationOrderCard({ station, order, onItemReady }) {
         <span className="text-xs font-mono text-paper/40">{minutesAgo}m ago</span>
       </div>
       <div className="space-y-2">
-        {order.items.map((item) => (
+        {(order.items || []).map((item) => (
           <div
             key={item.itemId}
             className="flex items-center justify-between rounded-lg bg-ink/40 px-3 py-2"

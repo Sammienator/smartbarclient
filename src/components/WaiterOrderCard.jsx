@@ -34,7 +34,7 @@ export default function WaiterOrderCard({ order, onEnded }) {
         <span className="text-xs font-mono text-paper/40">{minutesAgo}m ago</span>
       </div>
       <div className="space-y-1 mb-3">
-        {order.items.map((it, i) => (
+        {(order.items || []).map((it, i) => (
           <p key={i} className="text-sm text-paper/70">
             {it.quantity} × {it.name}
           </p>

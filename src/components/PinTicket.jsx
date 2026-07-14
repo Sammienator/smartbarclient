@@ -19,7 +19,7 @@ export default function PinTicket({ order, onClose }) {
 
         <div className="px-6 pb-6">
           <div className="border-t border-dashed border-ink/15 pt-4 space-y-1.5 mb-5">
-            {order.items.map((it, i) => (
+            {(order.items || []).map((it, i) => (
               <div key={i} className="flex justify-between text-sm text-ink/70">
                 <span>{it.quantity} × {it.name}</span>
                 <span className="font-mono">KES {it.price * it.quantity}</span>

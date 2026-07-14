@@ -131,8 +131,15 @@ export default function GuestApp() {
         tableNumber,
         items: cart.map((c) => ({ menuItemId: c.menuItemId, quantity: c.quantity })),
       });
-      setConfirmedOrder(res.data);
-      setCart([]);
+      // Guard against a malformed/unexpected response (e.g. a proxy or
+      // CORS misconfiguration returning something other than the order
+      // object) rather than handing it straight to PinTicket to render.
+      if (res.data && typeof res.data === "object" && res.data.pin) {
+        setConfirmedOrder({ ...res.data, items: Array.isArray(res.data.items) ? res.data.items : [] });
+        setCart([]);
+      } else {
+        setError("Order may not have been placed correctly. Please check with a staff member before ordering again.");
+      }
     } catch (err) {
       setError(err.response?.data?.error || "Could not place the order. Please try again.");
     } finally {
