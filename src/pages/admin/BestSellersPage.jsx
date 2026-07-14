@@ -1,7 +1,31 @@
 import { useEffect, useState } from "react";
+import {
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Cell,
+} from "recharts";
 import api from "../../lib/api";
 import { asArray } from "../../lib/asArray";
 import Section from "../../components/Section";
+
+const BAR_COLORS = ["#e3a857", "#b9812f", "#c9784f", "#3d7a63", "#2c5a49"];
+
+function BestSellerTooltip({ active, payload }) {
+  if (!active || !payload || payload.length === 0) return null;
+  const d = payload[0].payload;
+  return (
+    <div className="bg-ink text-paper rounded-lg px-3 py-2 text-xs shadow-lg">
+      <p className="font-mono text-paper/50 mb-1">{d.name}</p>
+      <p>Sold: <span className="font-mono">{d.totalQuantitySold}</span></p>
+      <p>Revenue: <span className="font-mono">KES {d.totalRevenue.toLocaleString()}</span></p>
+    </div>
+  );
+}
 
 export default function BestSellersPage() {
   const [rows, setRows] = useState([]);
@@ -39,14 +63,37 @@ export default function BestSellersPage() {
       {rows.length === 0 ? (
         <p className="text-ink/40 text-sm">No completed orders in this range.</p>
       ) : (
-        <ol className="space-y-1.5">
-          {rows.map((r, i) => (
-            <li key={r._id} className="flex justify-between text-sm">
-              <span className="text-ink"><span className="text-ink/30 font-mono mr-2">{i + 1}</span>{r.name}</span>
-              <span className="font-mono text-ink/60">{r.totalQuantitySold} sold · KES {r.totalRevenue}</span>
-            </li>
-          ))}
-        </ol>
+        <>
+          <div style={{ height: Math.max(180, rows.length * 40) }} className="-ml-2 mb-5">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={rows} layout="vertical" margin={{ top: 4, right: 24, left: 8, bottom: 4 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#16181d10" horizontal={false} />
+                <XAxis type="number" tick={{ fontSize: 11, fill: "#16181d66" }} allowDecimals={false} />
+                <YAxis
+                  type="category"
+                  dataKey="name"
+                  width={140}
+                  tick={{ fontSize: 12, fill: "#16181d" }}
+                />
+                <Tooltip content={<BestSellerTooltip />} cursor={{ fill: "#16181d08" }} />
+                <Bar dataKey="totalQuantitySold" name="Qty sold" radius={[0, 4, 4, 0]} maxBarSize={22}>
+                  {rows.map((r, i) => (
+                    <Cell key={r._id} fill={BAR_COLORS[i % BAR_COLORS.length]} />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+
+          <ol className="space-y-1.5">
+            {rows.map((r, i) => (
+              <li key={r._id} className="flex justify-between text-sm">
+                <span className="text-ink"><span className="text-ink/30 font-mono mr-2">{i + 1}</span>{r.name}</span>
+                <span className="font-mono text-ink/60">{r.totalQuantitySold} sold · KES {r.totalRevenue}</span>
+              </li>
+            ))}
+          </ol>
+        </>
       )}
     </Section>
   );

@@ -1,7 +1,36 @@
 import { useEffect, useState } from "react";
+import {
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+} from "recharts";
 import api from "../../lib/api";
 import { asArray } from "../../lib/asArray";
 import Section from "../../components/Section";
+
+const MOSS = "#3d7a63";
+
+function fmtSeconds(s) {
+  const m = Math.floor(s / 60);
+  const sec = Math.round(s % 60);
+  return m > 0 ? `${m}m ${sec}s` : `${sec}s`;
+}
+
+function DeliveryTooltip({ active, payload }) {
+  if (!active || !payload || payload.length === 0) return null;
+  const d = payload[0].payload;
+  return (
+    <div className="bg-ink text-paper rounded-lg px-3 py-2 text-xs shadow-lg">
+      <p className="font-mono text-paper/50 mb-1">{d.waiterName}</p>
+      <p>Avg. close time: <span className="font-mono">{fmtSeconds(d.avgSeconds)}</span></p>
+      <p>Orders: <span className="font-mono">{d.orderCount}</span></p>
+    </div>
+  );
+}
 
 export default function DeliveryTimesPage() {
   const [rows, setRows] = useState([]);
@@ -19,6 +48,18 @@ export default function DeliveryTimesPage() {
       {rows.length === 0 ? (
         <p className="text-ink/40 text-sm">No completed orders yet.</p>
       ) : (
+        <>
+        <div style={{ height: Math.max(160, rows.length * 44) }} className="-ml-2 mb-5">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={rows} layout="vertical" margin={{ top: 4, right: 24, left: 8, bottom: 4 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#16181d10" horizontal={false} />
+              <XAxis type="number" tickFormatter={fmtSeconds} tick={{ fontSize: 11, fill: "#16181d66" }} />
+              <YAxis type="category" dataKey="waiterName" width={100} tick={{ fontSize: 12, fill: "#16181d" }} />
+              <Tooltip content={<DeliveryTooltip />} cursor={{ fill: "#16181d08" }} />
+              <Bar dataKey="avgSeconds" name="Avg. close time" fill={MOSS} radius={[0, 4, 4, 0]} maxBarSize={22} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
         <table className="w-full text-sm">
           <thead>
             <tr className="text-left text-ink/40 text-xs uppercase tracking-wide">
@@ -37,6 +78,7 @@ export default function DeliveryTimesPage() {
             ))}
           </tbody>
         </table>
+        </>
       )}
     </Section>
   );

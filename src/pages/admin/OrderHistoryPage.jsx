@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import api from "../../lib/api";
 import { asArray } from "../../lib/asArray";
 import Section from "../../components/Section";
+import ReceiptModal from "../../components/ReceiptModal";
 
 function timeCell(value) {
   return value ? new Date(value).toLocaleString() : "—";
@@ -12,6 +13,7 @@ export default function OrderHistoryPage() {
   const [error, setError] = useState("");
   const [start, setStart] = useState("");
   const [end, setEnd] = useState("");
+  const [receiptOrder, setReceiptOrder] = useState(null);
 
   function load() {
     const params = {};
@@ -59,6 +61,7 @@ export default function OrderHistoryPage() {
                 <th className="pb-2">Kitchen ready</th>
                 <th className="pb-2">Bar ready</th>
                 <th className="pb-2">Closed</th>
+                <th className="pb-2"></th>
               </tr>
             </thead>
             <tbody>
@@ -74,12 +77,21 @@ export default function OrderHistoryPage() {
                   <td className="py-2 font-mono text-ink/50 text-xs">{timeCell(o.kitchenReadyAt)}</td>
                   <td className="py-2 font-mono text-ink/50 text-xs">{timeCell(o.barReadyAt)}</td>
                   <td className="py-2 font-mono text-ink/50 text-xs">{timeCell(o.completedAt)}</td>
+                  <td className="py-2 text-right">
+                    <button
+                      onClick={() => setReceiptOrder(o)}
+                      className="text-xs rounded-lg bg-ink/5 text-ink/70 px-2.5 py-1 hover:bg-ink/10 transition-colors"
+                    >
+                      Print receipt
+                    </button>
+                  </td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
       )}
+      {receiptOrder && <ReceiptModal order={receiptOrder} onClose={() => setReceiptOrder(null)} />}
     </Section>
   );
 }

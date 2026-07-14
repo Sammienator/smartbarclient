@@ -1,7 +1,34 @@
 import { useEffect, useState } from "react";
+import {
+  ResponsiveContainer,
+  ComposedChart,
+  Bar,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+} from "recharts";
 import api from "../../lib/api";
 import { asArray } from "../../lib/asArray";
 import Section from "../../components/Section";
+
+const AMBER = "#e3a857";
+const MOSS = "#3d7a63";
+
+function SalesTooltip({ active, payload, label }) {
+  if (!active || !payload || payload.length === 0) return null;
+  const revenue = payload.find((p) => p.dataKey === "revenue")?.value ?? 0;
+  const orderCount = payload.find((p) => p.dataKey === "orderCount")?.value ?? 0;
+  return (
+    <div className="bg-ink text-paper rounded-lg px-3 py-2 text-xs shadow-lg">
+      <p className="font-mono text-paper/50 mb-1">{label}</p>
+      <p>Revenue: <span className="font-mono">KES {revenue.toLocaleString()}</span></p>
+      <p>Orders: <span className="font-mono">{orderCount}</span></p>
+    </div>
+  );
+}
 
 function SummaryCard({ label, revenue, orderCount }) {
   return (
@@ -79,23 +106,44 @@ export default function SalesPage() {
         {rows.length === 0 ? (
           <p className="text-ink/40 text-sm">No completed orders in this range yet.</p>
         ) : (
-          <div className="space-y-2">
-            {rows.map((r) => (
-              <div key={r.period} className="flex items-center gap-3">
-                <span className="w-24 text-xs font-mono text-ink/50 shrink-0">{r.period}</span>
-                <div className="flex-1 bg-ink/5 rounded h-6 overflow-hidden">
-                  <div
-                    className="bg-amber h-full rounded"
-                    style={{ width: `${(r.revenue / maxRevenue) * 100}%` }}
+          <>
+            <div className="h-72 -ml-2">
+              <ResponsiveContainer width="100%" height="100%">
+                <ComposedChart data={rows} margin={{ top: 8, right: 12, left: 0, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#16181d10" vertical={false} />
+                  <XAxis dataKey="period" tick={{ fontSize: 11, fill: "#16181d66" }} />
+                  <YAxis
+                    yAxisId="revenue"
+                    tick={{ fontSize: 11, fill: "#16181d66" }}
+                    tickFormatter={(v) => `KES ${v >= 1000 ? `${v / 1000}k` : v}`}
                   />
+                  <YAxis yAxisId="orders" orientation="right" tick={{ fontSize: 11, fill: "#16181d66" }} allowDecimals={false} />
+                  <Tooltip content={<SalesTooltip />} />
+                  <Legend wrapperStyle={{ fontSize: 12 }} />
+                  <Bar yAxisId="revenue" dataKey="revenue" name="Revenue (KES)" fill={AMBER} radius={[4, 4, 0, 0]} maxBarSize={48} />
+                  <Line yAxisId="orders" dataKey="orderCount" name="Orders" stroke={MOSS} strokeWidth={2} dot={{ r: 3 }} />
+                </ComposedChart>
+              </ResponsiveContainer>
+            </div>
+
+            <div className="space-y-2 mt-5">
+              {rows.map((r) => (
+                <div key={r.period} className="flex items-center gap-3">
+                  <span className="w-24 text-xs font-mono text-ink/50 shrink-0">{r.period}</span>
+                  <div className="flex-1 bg-ink/5 rounded h-6 overflow-hidden">
+                    <div
+                      className="bg-amber h-full rounded"
+                      style={{ width: `${(r.revenue / maxRevenue) * 100}%` }}
+                    />
+                  </div>
+                  <span className="w-28 text-right text-sm font-mono text-ink shrink-0">
+                    KES {r.revenue.toLocaleString()}
+                  </span>
+                  <span className="w-16 text-right text-xs text-ink/40 shrink-0">{r.orderCount} ord.</span>
                 </div>
-                <span className="w-28 text-right text-sm font-mono text-ink shrink-0">
-                  KES {r.revenue.toLocaleString()}
-                </span>
-                <span className="w-16 text-right text-xs text-ink/40 shrink-0">{r.orderCount} ord.</span>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          </>
         )}
       </Section>
     </div>

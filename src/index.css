@@ -17,3 +17,20 @@ body {
 .font-mono {
   font-family: 'IBM Plex Mono', ui-monospace, monospace;
 }
+
+/* Receipt printing: hide the whole app, show only the receipt markup. */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #receipt-print-area,
+  #receipt-print-area * {
+    visibility: visible;
+  }
+  #receipt-print-area {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+  }
+}
