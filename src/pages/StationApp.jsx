@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import api from "../lib/api";
 import { socket } from "../lib/socket";
+import { asArray } from "../lib/asArray";
 import NavBar from "../components/NavBar";
 import StationOrderCard from "../components/StationOrderCard";
 
@@ -17,8 +18,8 @@ export default function StationApp({ station }) {
       .then((res) => {
         // The endpoint returns every item in this category regardless of
         // prep status; only show what's still pending.
-        const pending = res.data
-          .map((o) => ({ ...o, items: o.items.filter((i) => !i.prepared) }))
+        const pending = asArray(res.data)
+          .map((o) => ({ ...o, items: asArray(o.items).filter((i) => !i.prepared) }))
           .filter((o) => o.items.length > 0);
         setOrders(pending);
       })

@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import api from "../../lib/api";
+import { asArray } from "../../lib/asArray";
 import Section from "../../components/Section";
 
 export default function BestSellersPage() {
   const [rows, setRows] = useState([]);
+  const [error, setError] = useState("");
   const [start, setStart] = useState("");
   const [end, setEnd] = useState("");
 
@@ -11,13 +13,18 @@ export default function BestSellersPage() {
     const params = {};
     if (start) params.start = start;
     if (end) params.end = end;
-    api.get("/admin/best-sellers", { params }).then((res) => setRows(res.data));
+    setError("");
+    api
+      .get("/admin/best-sellers", { params })
+      .then((res) => setRows(asArray(res.data)))
+      .catch(() => setError("Could not load best sellers. Is the backend reachable?"));
   }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(load, []);
 
   return (
     <Section title="Best sellers">
+      {error && <p className="text-danger text-sm mb-3">{error}</p>}
       <div className="flex gap-2 mb-4 items-end">
         <label className="text-xs text-ink/50">
           From

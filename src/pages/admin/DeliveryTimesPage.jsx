@@ -1,15 +1,21 @@
 import { useEffect, useState } from "react";
 import api from "../../lib/api";
+import { asArray } from "../../lib/asArray";
 import Section from "../../components/Section";
 
 export default function DeliveryTimesPage() {
   const [rows, setRows] = useState([]);
+  const [error, setError] = useState("");
   useEffect(() => {
-    api.get("/admin/delivery-times").then((res) => setRows(res.data));
+    api
+      .get("/admin/delivery-times")
+      .then((res) => setRows(asArray(res.data)))
+      .catch(() => setError("Could not load delivery times. Is the backend reachable?"));
   }, []);
 
   return (
     <Section title="Delivery time per waiter">
+      {error && <p className="text-danger text-sm mb-3">{error}</p>}
       {rows.length === 0 ? (
         <p className="text-ink/40 text-sm">No completed orders yet.</p>
       ) : (

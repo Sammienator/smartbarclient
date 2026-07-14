@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import api from "../../lib/api";
+import { asArray } from "../../lib/asArray";
 import Section from "../../components/Section";
 
 function MenuItemList({ items, onDeleted }) {
@@ -61,7 +62,10 @@ export default function QuickAddPage() {
   const [menuItems, setMenuItems] = useState([]);
 
   function loadMenu() {
-    api.get("/menu").then((res) => setMenuItems(res.data));
+    api
+      .get("/menu")
+      .then((res) => setMenuItems(asArray(res.data)))
+      .catch(() => setStatus("Could not load menu items. Is the backend reachable?"));
   }
   useEffect(loadMenu, []);
 

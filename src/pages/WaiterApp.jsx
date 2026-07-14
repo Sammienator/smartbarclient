@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import api from "../lib/api";
 import { socket } from "../lib/socket";
+import { asArray } from "../lib/asArray";
 import WaiterOrderCard from "../components/WaiterOrderCard";
 import NavBar from "../components/NavBar";
 
@@ -9,9 +10,13 @@ export default function WaiterApp() {
   const [waiterId, setWaiterId] = useState(localStorage.getItem("smartbar_waiter_id") || "");
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    api.get("/waiters").then((res) => setWaiters(res.data));
+    api
+      .get("/waiters")
+      .then((res) => setWaiters(asArray(res.data)))
+      .catch(() => setError("Could not load waiters. Is the backend running?"));
   }, []);
 
   useEffect(() => {
@@ -21,7 +26,8 @@ export default function WaiterApp() {
     setLoading(true);
     api
       .get(`/orders/waiter/${waiterId}`)
-      .then((res) => setOrders(res.data))
+      .then((res) => setOrders(asArray(res.data)))
+      .catch(() => setError("Could not load orders. Is the backend running?"))
       .finally(() => setLoading(false));
 
     socket.emit("join:waiter", waiterId);
@@ -49,6 +55,7 @@ export default function WaiterApp() {
         <div className="w-full max-w-xs">
           <p className="font-mono text-xs uppercase tracking-widest text-paper/40 mb-2">Smart Bar</p>
           <h1 className="font-display font-bold text-2xl text-paper mb-6">Who's working?</h1>
+          {error && <p className="text-danger text-sm mb-3">{error}</p>}
           <div className="space-y-2">
             {waiters.map((w) => (
               <button
@@ -95,6 +102,7 @@ export default function WaiterApp() {
       </header>
 
       <div className="px-5 space-y-3">
+        {error && <p className="text-danger text-sm">{error}</p>}
         {loading && <p className="text-paper/40 text-sm">Loading orders…</p>}
         {!loading && orders.length === 0 && (
           <p className="text-paper/40 text-sm">No active orders right now.</p>

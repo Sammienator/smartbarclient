@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import api from "../../lib/api";
+import { asArray } from "../../lib/asArray";
 import Section from "../../components/Section";
 
 function SummaryCard({ label, revenue, orderCount }) {
@@ -16,18 +17,26 @@ export default function SalesPage() {
   const [summary, setSummary] = useState(null);
   const [period, setPeriod] = useState("day");
   const [rows, setRows] = useState([]);
+  const [error, setError] = useState("");
   const [start, setStart] = useState("");
   const [end, setEnd] = useState("");
 
   useEffect(() => {
-    api.get("/admin/sales/summary").then((res) => setSummary(res.data));
+    api
+      .get("/admin/sales/summary")
+      .then((res) => setSummary(res.data && typeof res.data === "object" ? res.data : null))
+      .catch(() => setError("Could not load sales summary. Is the backend reachable?"));
   }, []);
 
   function loadBreakdown() {
     const params = { period };
     if (start) params.start = start;
     if (end) params.end = end;
-    api.get("/admin/sales", { params }).then((res) => setRows(res.data));
+    setError("");
+    api
+      .get("/admin/sales", { params })
+      .then((res) => setRows(asArray(res.data)))
+      .catch(() => setError("Could not load the revenue breakdown. Is the backend reachable?"));
   }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(loadBreakdown, [period]);
@@ -36,6 +45,7 @@ export default function SalesPage() {
 
   return (
     <div className="space-y-5">
+      {error && <p className="text-danger text-sm">{error}</p>}
       <div className="grid sm:grid-cols-3 gap-4">
         <SummaryCard label="Today" revenue={summary?.today.revenue || 0} orderCount={summary?.today.orderCount || 0} />
         <SummaryCard label="This week" revenue={summary?.thisWeek.revenue || 0} orderCount={summary?.thisWeek.orderCount || 0} />

@@ -1,17 +1,22 @@
 import { useEffect, useState } from "react";
 import api from "../../lib/api";
 import { socket } from "../../lib/socket";
+import { asArray } from "../../lib/asArray";
 import Section from "../../components/Section";
 
 export default function LowStockPage() {
   const [items, setItems] = useState([]);
   const [threshold, setThreshold] = useState(5);
+  const [error, setError] = useState("");
 
   function load() {
-    api.get("/admin/low-stock").then((res) => {
-      setItems(res.data.items);
-      setThreshold(res.data.threshold);
-    });
+    api
+      .get("/admin/low-stock")
+      .then((res) => {
+        setItems(asArray(res.data?.items));
+        setThreshold(res.data?.threshold ?? 5);
+      })
+      .catch(() => setError("Could not load low-stock items. Is the backend reachable?"));
   }
   useEffect(() => {
     load();
@@ -22,6 +27,7 @@ export default function LowStockPage() {
 
   return (
     <Section title={`Low stock (below ${threshold})`}>
+      {error && <p className="text-danger text-sm mb-3">{error}</p>}
       {items.length === 0 ? (
         <p className="text-ink/40 text-sm">Everything is well stocked.</p>
       ) : (

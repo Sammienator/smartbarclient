@@ -1,13 +1,21 @@
 import { useEffect, useState } from "react";
 import api from "../../lib/api";
 import { socket } from "../../lib/socket";
+import { asArray } from "../../lib/asArray";
 import Section from "../../components/Section";
 
 export default function OrderPinsPage() {
   const [orders, setOrders] = useState([]);
+  const [error, setError] = useState("");
 
   function load() {
-    api.get("/admin/orders/active").then((res) => setOrders(res.data));
+    api
+      .get("/admin/orders/active")
+      .then((res) => {
+        setOrders(asArray(res.data));
+        setError("");
+      })
+      .catch(() => setError("Could not load active orders. Is the backend reachable?"));
   }
 
   useEffect(() => {
@@ -26,6 +34,7 @@ export default function OrderPinsPage() {
       <p className="text-xs text-ink/40 mb-3">
         For staff use only - look up a guest's PIN here if they've misplaced it.
       </p>
+      {error && <p className="text-danger text-sm mb-3">{error}</p>}
       {orders.length === 0 ? (
         <p className="text-ink/40 text-sm">No active orders right now.</p>
       ) : (
@@ -45,7 +54,7 @@ export default function OrderPinsPage() {
                 <td className="py-2 font-mono font-semibold text-amber-deep tracking-widest">{o.pin}</td>
                 <td className="py-2 text-ink/70">{o.waiterName}</td>
                 <td className="py-2 text-ink/50">
-                  {o.items.map((it) => `${it.quantity}× ${it.name}`).join(", ")}
+                  {(o.items || []).map((it) => `${it.quantity}× ${it.name}`).join(", ")}
                 </td>
               </tr>
             ))}

@@ -88,5 +88,3 @@ differences are plumbing:
 - No waiter login exists by design (per your instruction), so the "Switch" button on the waiter
   app is trust-based - anyone at that device can pick any waiter's name. Fine for a single shared
   tablet per station; worth revisiting if waiters use personal devices.
-# smartbarclient
-# smartbarclient

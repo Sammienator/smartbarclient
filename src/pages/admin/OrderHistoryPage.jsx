@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import api from "../../lib/api";
+import { asArray } from "../../lib/asArray";
 import Section from "../../components/Section";
 
 function timeCell(value) {
@@ -8,6 +9,7 @@ function timeCell(value) {
 
 export default function OrderHistoryPage() {
   const [orders, setOrders] = useState([]);
+  const [error, setError] = useState("");
   const [start, setStart] = useState("");
   const [end, setEnd] = useState("");
 
@@ -15,7 +17,11 @@ export default function OrderHistoryPage() {
     const params = {};
     if (start) params.start = start;
     if (end) params.end = end;
-    api.get("/admin/orders/history", { params }).then((res) => setOrders(res.data));
+    setError("");
+    api
+      .get("/admin/orders/history", { params })
+      .then((res) => setOrders(asArray(res.data)))
+      .catch(() => setError("Could not load order history. Is the backend reachable?"));
   }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(load, []);
@@ -26,6 +32,7 @@ export default function OrderHistoryPage() {
         A permanent record of every completed order, most recent first — when it was placed, when
         the kitchen and bar each finished prepping their side, and when the waiter closed it out.
       </p>
+      {error && <p className="text-danger text-sm mb-3">{error}</p>}
       <div className="flex gap-2 mb-4 items-end">
         <label className="text-xs text-ink/50">
           From
@@ -60,7 +67,7 @@ export default function OrderHistoryPage() {
                   <td className="py-2 text-ink">{o.tableNumber}</td>
                   <td className="py-2 text-ink/70">{o.waiterName}</td>
                   <td className="py-2 text-ink/50">
-                    {o.items.map((it) => `${it.quantity}× ${it.name}`).join(", ")}
+                    {(o.items || []).map((it) => `${it.quantity}× ${it.name}`).join(", ")}
                   </td>
                   <td className="py-2 font-mono text-ink/70">KES {o.totalAmount}</td>
                   <td className="py-2 font-mono text-ink/50 text-xs">{timeCell(o.placedAt)}</td>

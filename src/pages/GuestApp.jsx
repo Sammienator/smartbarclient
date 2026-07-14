@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { AnimatePresence } from "framer-motion";
 import api from "../lib/api";
 import { socket } from "../lib/socket";
+import { asArray } from "../lib/asArray";
 import MenuItemCard from "../components/MenuItemCard";
 import CartBar from "../components/CartBar";
 import PinTicket from "../components/PinTicket";
@@ -64,7 +65,8 @@ export default function GuestApp() {
   useEffect(() => {
     api
       .get("/tables")
-      .then((res) => setTables(res.data))
+      .then((res) => setTables(asArray(res.data)))
+      .catch(() => setError("Could not load tables. Is the backend running?"))
       .finally(() => setTablesLoading(false));
   }, []);
 
@@ -73,7 +75,7 @@ export default function GuestApp() {
 
     api
       .get("/menu")
-      .then((res) => setMenu(res.data))
+      .then((res) => setMenu(asArray(res.data)))
       .catch(() => setError("Could not load the menu. Is the backend running?"))
       .finally(() => setLoading(false));
 
