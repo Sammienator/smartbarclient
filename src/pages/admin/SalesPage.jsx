@@ -10,21 +10,22 @@ import {
   Tooltip,
   Legend,
 } from "recharts";
+import { TrendingUp } from "lucide-react";
 import api from "../../lib/api";
 import { asArray } from "../../lib/asArray";
 import Section from "../../components/Section";
 
-const AMBER = "#e3a857";
-const MOSS = "#3d7a63";
+const AMBER = "#FFC22E";
+const MOSS = "#00C29A";
 
 function SalesTooltip({ active, payload, label }) {
   if (!active || !payload || payload.length === 0) return null;
   const revenue = payload.find((p) => p.dataKey === "revenue")?.value ?? 0;
   const orderCount = payload.find((p) => p.dataKey === "orderCount")?.value ?? 0;
   return (
-    <div className="bg-ink text-paper rounded-lg px-3 py-2 text-xs shadow-lg">
+    <div className="bg-ink text-paper rounded-lg px-3 py-2 text-xs shadow-pop border-2 border-ink">
       <p className="font-mono text-paper/50 mb-1">{label}</p>
-      <p>Revenue: <span className="font-mono">KES {revenue.toLocaleString()}</span></p>
+      <p>Revenue: <span className="font-mono text-amber">KES {revenue.toLocaleString()}</span></p>
       <p>Orders: <span className="font-mono">{orderCount}</span></p>
     </div>
   );
@@ -32,8 +33,11 @@ function SalesTooltip({ active, payload, label }) {
 
 function SummaryCard({ label, revenue, orderCount }) {
   return (
-    <div className="bg-white rounded-2xl border border-ink/10 p-5">
-      <p className="text-xs uppercase tracking-wide text-ink/40 mb-1">{label}</p>
+    <div className="relative bg-white rounded-2xl border-3 border-ink shadow-pop p-5 overflow-hidden">
+      <div className="absolute top-0 left-0 h-1.5 w-full bg-amber" />
+      <p className="text-xs uppercase tracking-wide text-ink/40 mb-1 flex items-center gap-1">
+        <TrendingUp size={12} /> {label}
+      </p>
       <p className="font-display font-bold text-2xl text-ink">KES {revenue.toLocaleString()}</p>
       <p className="text-ink/40 text-xs mt-1">{orderCount} order{orderCount === 1 ? "" : "s"}</p>
     </div>
@@ -79,14 +83,16 @@ export default function SalesPage() {
         <SummaryCard label="This month" revenue={summary?.thisMonth.revenue || 0} orderCount={summary?.thisMonth.orderCount || 0} />
       </div>
 
-      <Section title="Revenue breakdown">
+      <Section title="Revenue breakdown" accent="amber">
         <div className="flex flex-wrap gap-2 mb-4 items-end">
           <div className="flex gap-2">
             {["day", "week", "month"].map((p) => (
               <button
                 key={p}
                 onClick={() => setPeriod(p)}
-                className={`text-sm px-3 py-1.5 rounded-lg capitalize ${period === p ? "bg-ink text-paper" : "bg-ink/5 text-ink/60"}`}
+                className={`text-sm px-3 py-1.5 rounded-lg capitalize font-medium border-2 transition-colors ${
+                  period === p ? "bg-ink text-paper border-ink" : "bg-white text-ink/60 border-ink/15 hover:border-ink"
+                }`}
               >
                 By {p}
               </button>
@@ -94,13 +100,13 @@ export default function SalesPage() {
           </div>
           <label className="text-xs text-ink/50">
             From
-            <input type="date" value={start} onChange={(e) => setStart(e.target.value)} className="block border border-ink/15 rounded-lg px-2 py-1 mt-1" />
+            <input type="date" value={start} onChange={(e) => setStart(e.target.value)} className="block border-2 border-ink/15 rounded-lg px-2 py-1 mt-1 focus:outline-none focus:border-ink" />
           </label>
           <label className="text-xs text-ink/50">
             To
-            <input type="date" value={end} onChange={(e) => setEnd(e.target.value)} className="block border border-ink/15 rounded-lg px-2 py-1 mt-1" />
+            <input type="date" value={end} onChange={(e) => setEnd(e.target.value)} className="block border-2 border-ink/15 rounded-lg px-2 py-1 mt-1 focus:outline-none focus:border-ink" />
           </label>
-          <button onClick={loadBreakdown} className="rounded-lg bg-ink text-paper text-sm px-3 py-1.5">Filter</button>
+          <button onClick={loadBreakdown} className="rounded-lg bg-amber text-ink border-2 border-ink text-sm font-display font-semibold px-3 py-1.5">Filter</button>
         </div>
 
         {rows.length === 0 ? (
@@ -110,18 +116,18 @@ export default function SalesPage() {
             <div className="h-72 -ml-2">
               <ResponsiveContainer width="100%" height="100%">
                 <ComposedChart data={rows} margin={{ top: 8, right: 12, left: 0, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#16181d10" vertical={false} />
-                  <XAxis dataKey="period" tick={{ fontSize: 11, fill: "#16181d66" }} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#11111410" vertical={false} />
+                  <XAxis dataKey="period" tick={{ fontSize: 11, fill: "#11111466" }} />
                   <YAxis
                     yAxisId="revenue"
-                    tick={{ fontSize: 11, fill: "#16181d66" }}
+                    tick={{ fontSize: 11, fill: "#11111466" }}
                     tickFormatter={(v) => `KES ${v >= 1000 ? `${v / 1000}k` : v}`}
                   />
-                  <YAxis yAxisId="orders" orientation="right" tick={{ fontSize: 11, fill: "#16181d66" }} allowDecimals={false} />
+                  <YAxis yAxisId="orders" orientation="right" tick={{ fontSize: 11, fill: "#11111466" }} allowDecimals={false} />
                   <Tooltip content={<SalesTooltip />} />
                   <Legend wrapperStyle={{ fontSize: 12 }} />
                   <Bar yAxisId="revenue" dataKey="revenue" name="Revenue (KES)" fill={AMBER} radius={[4, 4, 0, 0]} maxBarSize={48} />
-                  <Line yAxisId="orders" dataKey="orderCount" name="Orders" stroke={MOSS} strokeWidth={2} dot={{ r: 3 }} />
+                  <Line yAxisId="orders" dataKey="orderCount" name="Orders" stroke={MOSS} strokeWidth={2.5} dot={{ r: 3 }} />
                 </ComposedChart>
               </ResponsiveContainer>
             </div>
@@ -130,7 +136,7 @@ export default function SalesPage() {
               {rows.map((r) => (
                 <div key={r.period} className="flex items-center gap-3">
                   <span className="w-24 text-xs font-mono text-ink/50 shrink-0">{r.period}</span>
-                  <div className="flex-1 bg-ink/5 rounded h-6 overflow-hidden">
+                  <div className="flex-1 bg-ink/5 rounded h-6 overflow-hidden border border-ink/10">
                     <div
                       className="bg-amber h-full rounded"
                       style={{ width: `${(r.revenue / maxRevenue) * 100}%` }}

@@ -1,3 +1,5 @@
+import { motion } from "framer-motion";
+import { Check, Timer } from "lucide-react";
 import api from "../lib/api";
 
 export default function StationOrderCard({ station, order, onItemReady }) {
@@ -13,31 +15,44 @@ export default function StationOrderCard({ station, order, onItemReady }) {
   }
 
   const minutesAgo = Math.max(0, Math.round((Date.now() - new Date(order.createdAt)) / 60000));
+  const urgent = minutesAgo >= 10;
 
   return (
-    <div className="rounded-xl border border-ink-line bg-ink-soft p-4">
+    <motion.div
+      layout
+      initial={{ opacity: 0, x: -10 }}
+      animate={{ opacity: 1, x: 0 }}
+      className={`glow-panel rounded-xl border-2 bg-ink-soft p-4 ${urgent ? "border-danger" : "border-ink-line"}`}
+    >
       <div className="flex items-center justify-between mb-3">
-        <p className="font-display font-semibold text-paper">Table {order.tableNumber}</p>
-        <span className="text-xs font-mono text-paper/40">{minutesAgo}m ago</span>
+        <p className="font-display font-bold text-paper">Table {order.tableNumber}</p>
+        <span
+          className={`text-xs font-mono flex items-center gap-1 px-2 py-0.5 rounded-md ${
+            urgent ? "text-danger bg-danger/10" : "text-paper/40"
+          }`}
+        >
+          <Timer size={11} /> {minutesAgo}m ago
+        </span>
       </div>
       <div className="space-y-2">
         {(order.items || []).map((item) => (
           <div
             key={item.itemId}
-            className="flex items-center justify-between rounded-lg bg-ink/40 px-3 py-2"
+            className="flex items-center justify-between rounded-lg bg-ink border border-ink-line px-3 py-2"
           >
             <span className="text-sm text-paper/80">
-              {item.quantity} × {item.name}
+              <span className="font-mono text-amber font-semibold">{item.quantity}×</span> {item.name}
             </span>
-            <button
+            <motion.button
+              whileTap={{ scale: 0.92 }}
               onClick={() => markReady(item.itemId)}
-              className="text-xs font-medium rounded-md bg-amber text-ink px-2.5 py-1.5 hover:bg-amber/90 transition-colors"
+              className="text-xs font-display font-semibold rounded-md bg-moss text-ink px-2.5 py-1.5 border-2 border-ink hover:brightness-105 transition-all flex items-center gap-1"
             >
-              Mark ready
-            </button>
+              <Check size={12} strokeWidth={3} /> Ready
+            </motion.button>
           </div>
         ))}
       </div>
-    </div>
+    </motion.div>
   );
 }

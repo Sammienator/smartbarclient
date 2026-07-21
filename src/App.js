@@ -20,28 +20,28 @@ const VIEWS = [
     label: "Guest app",
     desc: "Browse the menu, pick a table, place an order",
     icon: UtensilsCrossed,
-    accent: "teal",
+    accent: "amber",
   },
   {
     to: "/waiter",
     label: "Waiter app",
     desc: "Live order queue, close out with a guest's PIN",
     icon: ClipboardList,
-    accent: "teal",
+    accent: "moss",
   },
   {
     to: "/kitchen",
     label: "Kitchen",
     desc: "Food orders as they come in, one tap when ready",
     icon: ChefHat,
-    accent: "amber",
+    accent: "copper",
   },
   {
     to: "/bar",
     label: "Drinks / bar",
     desc: "Same as kitchen, scoped to drinks",
     icon: Martini,
-    accent: "amber",
+    accent: "electric",
   },
   {
     to: "/admin",
@@ -53,28 +53,39 @@ const VIEWS = [
 ];
 
 const ACCENT_STYLES = {
-  teal: {
-    iconWrap: "bg-teal-50 text-emerald-700 group-hover:bg-emerald-700 group-hover:text-white",
-    ring: "hover:border-emerald-700/40 hover:shadow-emerald-900/5",
-  },
   amber: {
-    iconWrap: "bg-amber/15 text-amber-deep group-hover:bg-amber-deep group-hover:text-white",
-    ring: "hover:border-amber-deep/50 hover:shadow-amber-900/5",
+    iconWrap: "bg-amber/20 text-amber-deep group-hover:bg-amber group-hover:text-ink",
+    stripe: "bg-amber",
+  },
+  copper: {
+    iconWrap: "bg-copper/15 text-copper group-hover:bg-copper group-hover:text-paper",
+    stripe: "bg-copper",
+  },
+  moss: {
+    iconWrap: "bg-moss/20 text-moss-deep group-hover:bg-moss group-hover:text-ink",
+    stripe: "bg-moss",
+  },
+  electric: {
+    iconWrap: "bg-electric/15 text-electric group-hover:bg-electric group-hover:text-paper",
+    stripe: "bg-electric",
   },
   ink: {
     iconWrap: "bg-ink/5 text-ink group-hover:bg-ink group-hover:text-paper",
-    ring: "hover:border-ink/40 hover:shadow-ink/5",
+    stripe: "bg-ink",
   },
 };
 
 function Landing() {
   return (
     <div className="min-h-screen bg-paper relative overflow-hidden">
-      {/* soft ambient backdrop */}
+      {/* soft ambient backdrop + halftone texture, matatu-livery energy */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute -top-32 -left-24 w-96 h-96 rounded-full bg-amber/10 blur-3xl" />
-        <div className="absolute top-1/2 -right-24 w-96 h-96 rounded-full bg-moss/10 blur-3xl" />
+        <div className="absolute -top-32 -left-24 w-96 h-96 rounded-full bg-amber/15 blur-3xl" />
+        <div className="absolute top-1/3 -right-24 w-96 h-96 rounded-full bg-copper/10 blur-3xl" />
+        <div className="absolute bottom-0 left-1/3 w-72 h-72 rounded-full bg-electric/10 blur-3xl" />
+        <div className="absolute inset-0 urban-dots opacity-[0.04] text-ink" />
       </div>
+      <div className="h-2 hazard-strip w-full relative" aria-hidden="true" />
 
       <div className="relative min-h-screen flex flex-col items-center justify-center px-6 py-16">
         <motion.div
@@ -83,14 +94,18 @@ function Landing() {
           transition={{ duration: 0.4 }}
           className="text-center mb-12"
         >
-          <p className="font-mono text-xs uppercase tracking-[0.2em] text-ink/40 mb-3">Smart Bar</p>
-          <h1 className="font-display font-bold text-4xl sm:text-5xl text-ink mb-3">Choose a view</h1>
-          <p className="text-ink/50 text-sm max-w-md mx-auto">
+          <span className="tag-sticker inline-block bg-ink text-paper font-tag text-[10px] uppercase tracking-widest px-3 py-1.5 rounded-md border-2 border-ink shadow-pop-sm mb-4">
+            Smart Bar · Nairobi
+          </span>
+          <h1 className="font-tag text-3xl sm:text-5xl text-ink mb-3 leading-tight">
+            Choose your <span className="text-copper">view</span>
+          </h1>
+          <p className="text-ink/50 text-sm max-w-md mx-auto font-medium">
             One system, five screens — pick the one you need right now.
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 w-full max-w-4xl">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 w-full max-w-4xl">
           {VIEWS.map((v, i) => {
             const Icon = v.icon;
             const styles = ACCENT_STYLES[v.accent];
@@ -100,18 +115,20 @@ function Landing() {
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.35, delay: i * 0.06 }}
+                whileHover={{ y: -3 }}
                 className={i === 4 ? "sm:col-span-2 lg:col-span-1" : ""}
               >
                 <Link
                   to={v.to}
-                  className={`group relative flex flex-col h-full bg-white rounded-2xl border border-ink/10 p-6 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg ${styles.ring}`}
+                  className="group relative flex flex-col h-full bg-white rounded-2xl border-3 border-ink p-6 shadow-pop hover:shadow-pop-lg transition-shadow duration-150"
                 >
-                  <div className={`w-11 h-11 rounded-xl flex items-center justify-center mb-4 transition-colors duration-200 ${styles.iconWrap}`}>
-                    <Icon size={20} strokeWidth={2} />
+                  <div className={`absolute top-0 left-0 h-1.5 w-full ${styles.stripe}`} aria-hidden="true" />
+                  <div className={`w-11 h-11 rounded-xl flex items-center justify-center mb-4 transition-colors duration-200 border-2 border-ink ${styles.iconWrap}`}>
+                    <Icon size={20} strokeWidth={2.25} />
                   </div>
-                  <p className="font-display font-semibold text-ink text-lg mb-1">{v.label}</p>
+                  <p className="font-display font-bold text-ink text-lg mb-1">{v.label}</p>
                   <p className="text-ink/50 text-sm leading-snug flex-1">{v.desc}</p>
-                  <div className="flex items-center gap-1 text-xs font-medium text-ink/30 mt-4 group-hover:text-ink/60 transition-colors">
+                  <div className="flex items-center gap-1 text-xs font-semibold text-ink/40 mt-4 group-hover:text-ink transition-colors">
                     Open
                     <ArrowRight size={13} className="group-hover:translate-x-0.5 transition-transform" />
                   </div>

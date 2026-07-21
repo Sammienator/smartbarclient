@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { Minus, Plus, Flame } from "lucide-react";
 
 export default function MenuItemCard({ item, onAdd }) {
   const [qty, setQty] = useState(1);
+  const [justAdded, setJustAdded] = useState(false);
   const outOfStock = item.stockQty <= 0;
   const lowStock = !outOfStock && item.stockQty <= 5;
 
@@ -12,6 +14,11 @@ export default function MenuItemCard({ item, onAdd }) {
   function increment() {
     setQty((q) => Math.min(item.stockQty, q + 1));
   }
+  function handleAdd() {
+    onAdd(item, qty);
+    setJustAdded(true);
+    setTimeout(() => setJustAdded(false), 550);
+  }
 
   return (
     <motion.div
@@ -20,9 +27,16 @@ export default function MenuItemCard({ item, onAdd }) {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -6 }}
       transition={{ duration: 0.28, ease: "easeOut" }}
-      className="rounded-2xl bg-white border border-ink/10 p-3 flex flex-col shadow-sm hover:shadow-md transition-shadow"
+      whileHover={{ y: -3 }}
+      className="relative rounded-2xl bg-white border-3 border-ink p-3 flex flex-col shadow-pop hover:shadow-pop-lg transition-shadow"
     >
-      <div className="aspect-square w-full rounded-xl bg-paper-dim overflow-hidden flex items-center justify-center mb-3">
+      {lowStock && (
+        <span className="tag-sticker absolute -top-2.5 -right-2.5 z-10 bg-danger text-paper text-[10px] font-tag px-2 py-1 rounded-md border-2 border-ink shadow-pop-sm flex items-center gap-1">
+          <Flame size={10} /> {item.stockQty} left
+        </span>
+      )}
+
+      <div className="aspect-square w-full rounded-xl bg-paper-dim overflow-hidden flex items-center justify-center mb-3 border-2 border-ink/10">
         {item.imageUrl ? (
           <img src={item.imageUrl} alt={item.name} className="w-full h-full object-cover" />
         ) : (
@@ -30,25 +44,22 @@ export default function MenuItemCard({ item, onAdd }) {
         )}
       </div>
 
-      <p className="font-display font-semibold text-ink text-sm leading-tight mb-1 truncate">
+      <p className="font-display font-bold text-ink text-sm leading-tight mb-1 truncate">
         {item.name}
       </p>
       <div className="flex items-center justify-between mb-3">
-        <span className="text-ink/60 text-sm font-mono">KES {item.price}</span>
-        <span
-          className={
-            "text-xs font-mono " +
-            (outOfStock ? "text-ink/35" : lowStock ? "text-danger" : "text-ink/40")
-          }
-        >
-          {outOfStock ? "sold out" : `${item.stockQty} left`}
-        </span>
+        <span className="text-ink font-mono font-semibold text-sm">KES {item.price}</span>
+        {!lowStock && (
+          <span className={"text-xs font-mono " + (outOfStock ? "text-ink/35" : "text-ink/40")}>
+            {outOfStock ? "sold out" : `${item.stockQty} left`}
+          </span>
+        )}
       </div>
 
       {outOfStock ? (
         <button
           disabled
-          className="w-full rounded-lg bg-ink/5 text-ink/35 text-sm font-medium py-2 cursor-not-allowed mt-auto"
+          className="w-full rounded-lg bg-ink/5 text-ink/35 text-sm font-medium py-2 cursor-not-allowed mt-auto border-2 border-ink/10"
         >
           Unavailable
         </button>
@@ -58,25 +69,27 @@ export default function MenuItemCard({ item, onAdd }) {
             <button
               onClick={decrement}
               aria-label={`Decrease quantity of ${item.name}`}
-              className="w-7 h-7 rounded-lg border border-ink/15 text-ink hover:bg-ink/5 transition-colors text-sm"
+              className="w-7 h-7 rounded-lg border-2 border-ink text-ink hover:bg-ink hover:text-paper transition-colors flex items-center justify-center"
             >
-              −
+              <Minus size={13} strokeWidth={2.5} />
             </button>
-            <span className="w-5 text-center text-sm font-mono text-ink">{qty}</span>
+            <span className="w-5 text-center text-sm font-mono font-semibold text-ink">{qty}</span>
             <button
               onClick={increment}
               aria-label={`Increase quantity of ${item.name}`}
-              className="w-7 h-7 rounded-lg border border-ink/15 text-ink hover:bg-ink/5 transition-colors text-sm"
+              className="w-7 h-7 rounded-lg border-2 border-ink text-ink hover:bg-ink hover:text-paper transition-colors flex items-center justify-center"
             >
-              +
+              <Plus size={13} strokeWidth={2.5} />
             </button>
           </div>
-          <button
-            onClick={() => onAdd(item, qty)}
-            className="w-full rounded-lg bg-ink text-paper text-sm font-medium py-2 hover:bg-ink/85 transition-colors"
+          <motion.button
+            onClick={handleAdd}
+            whileTap={{ scale: 0.96 }}
+            animate={justAdded ? { backgroundColor: "#17C978" } : {}}
+            className="w-full rounded-lg bg-ink text-paper text-sm font-display font-semibold py-2 border-2 border-ink hover:bg-ink-soft transition-colors"
           >
-            Add
-          </button>
+            {justAdded ? "Added ✓" : "Add"}
+          </motion.button>
         </div>
       )}
     </motion.div>

@@ -29,7 +29,7 @@ export default function OrderHistoryPage() {
   useEffect(load, []);
 
   return (
-    <Section title="Order history">
+    <Section title="Order history" accent="electric">
       <p className="text-xs text-ink/40 mb-3">
         A permanent record of every completed order, most recent first — when it was placed, when
         the kitchen and bar each finished prepping their side, and when the waiter closed it out.
@@ -38,13 +38,13 @@ export default function OrderHistoryPage() {
       <div className="flex gap-2 mb-4 items-end">
         <label className="text-xs text-ink/50">
           From
-          <input type="date" value={start} onChange={(e) => setStart(e.target.value)} className="block border border-ink/15 rounded-lg px-2 py-1 mt-1" />
+          <input type="date" value={start} onChange={(e) => setStart(e.target.value)} className="block border-2 border-ink/15 rounded-lg px-2 py-1 mt-1 focus:outline-none focus:border-ink" />
         </label>
         <label className="text-xs text-ink/50">
           To
-          <input type="date" value={end} onChange={(e) => setEnd(e.target.value)} className="block border border-ink/15 rounded-lg px-2 py-1 mt-1" />
+          <input type="date" value={end} onChange={(e) => setEnd(e.target.value)} className="block border-2 border-ink/15 rounded-lg px-2 py-1 mt-1 focus:outline-none focus:border-ink" />
         </label>
-        <button onClick={load} className="rounded-lg bg-ink text-paper text-sm px-3 py-1.5">Filter</button>
+        <button onClick={load} className="rounded-lg bg-amber text-ink border-2 border-ink font-display font-semibold text-sm px-3 py-1.5">Filter</button>
       </div>
       {orders.length === 0 ? (
         <p className="text-ink/40 text-sm">No completed orders in this range yet.</p>
@@ -52,7 +52,7 @@ export default function OrderHistoryPage() {
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="text-left text-ink/40 text-xs uppercase tracking-wide">
+              <tr className="text-left text-ink/40 text-xs uppercase tracking-wide border-b-2 border-ink/10">
                 <th className="pb-2">Table</th>
                 <th className="pb-2">Waiter</th>
                 <th className="pb-2">Items</th>
@@ -80,7 +80,7 @@ export default function OrderHistoryPage() {
                   <td className="py-2 text-right">
                     <button
                       onClick={() => setReceiptOrder(o)}
-                      className="text-xs rounded-lg bg-ink/5 text-ink/70 px-2.5 py-1 hover:bg-ink/10 transition-colors"
+                      className="text-xs rounded-lg bg-white border-2 border-ink/20 text-ink/70 px-2.5 py-1 hover:border-ink hover:text-ink transition-colors"
                     >
                       Print receipt
                     </button>

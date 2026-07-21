@@ -8,14 +8,81 @@ html, body, #root {
 
 body {
   font-family: 'Inter', system-ui, sans-serif;
-  background-color: #faf7f0;
+  background-color: #f8f6ef;
 }
 
 .font-display {
   font-family: 'Space Grotesk', 'Inter', system-ui, sans-serif;
 }
+.font-tag {
+  font-family: 'Bungee', 'Space Grotesk', sans-serif;
+  letter-spacing: 0.01em;
+}
 .font-mono {
   font-family: 'IBM Plex Mono', ui-monospace, monospace;
+}
+
+/* Nairobi street-tech texture kit — matatu graffiti energy rendered as
+   flat color blocks, halftone dots and hard "sticker" shadows rather than
+   literal imagery. Loud, but purposeful: seasoning, not the meal. */
+.urban-stripes {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    currentColor 0px,
+    currentColor 3px,
+    transparent 3px,
+    transparent 16px
+  );
+}
+
+.urban-dots {
+  background-image: radial-gradient(currentColor 1.5px, transparent 1.5px);
+  background-size: 16px 16px;
+}
+
+.urban-gradient {
+  background-image: linear-gradient(115deg, #FFC22E 0%, #FF3D7A 55%, #3757FF 100%);
+}
+
+/* Hard "comic sticker" edge — flat color block, thick outline, offset
+   shadow that shifts on press for a tactile, spray-can-sticker feel. */
+.pop-card {
+  border: 3px solid #111114;
+  box-shadow: 4px 4px 0 0 #111114;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.pop-card:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 0 #111114;
+}
+
+/* Rotated sticker/tag label, like a spray-stencil badge slapped on a wall. */
+.tag-sticker {
+  display: inline-flex;
+  transform: rotate(-2deg);
+}
+
+/* Diagonal hazard/marker strip, nodding to matatu body livery. */
+.hazard-strip {
+  background-image: repeating-linear-gradient(
+    45deg,
+    #111114 0px,
+    #111114 10px,
+    #FFC22E 10px,
+    #FFC22E 20px
+  );
+}
+
+/* Subtle scanline glow for "smart"/futuristic panels (kitchen, bar, admin). */
+.glow-panel {
+  position: relative;
+}
+.glow-panel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: linear-gradient(180deg, rgba(55,87,255,0.06) 0%, transparent 40%);
 }
 
 /* Receipt printing: hide the whole app, show only the receipt markup. */

@@ -5,25 +5,52 @@ module.exports = {
     extend: {
       fontFamily: {
         display: ["Space Grotesk", "Inter", "system-ui", "sans-serif"],
+        tag: ["Bungee", "Space Grotesk", "sans-serif"],
         body: ["Inter", "system-ui", "sans-serif"],
         mono: ["IBM Plex Mono", "ui-monospace", "monospace"],
       },
       colors: {
-        ink: "#16181d",
-        "ink-soft": "#1e2128",
-        "ink-line": "#2c303a",
-        paper: "#faf7f0",
-        "paper-dim": "#f1ece0",
+        ink: "#111114",
+        "ink-soft": "#1b1c22",
+        "ink-line": "#2f3038",
+        paper: "#f8f6ef",
+        "paper-dim": "#eeeadd",
         amber: {
-          DEFAULT: "#e3a857",
-          deep: "#b9812f",
+          DEFAULT: "#FFC22E",
+          deep: "#FF8A00",
         },
-        copper: "#c9784f",
+        copper: "#FF3D7A",
         moss: {
-          DEFAULT: "#3d7a63",
-          deep: "#2c5a49",
+          DEFAULT: "#00C29A",
+          deep: "#009374",
         },
-        danger: "#b5453f",
+        electric: {
+          DEFAULT: "#3757FF",
+          deep: "#1E33B8",
+        },
+        danger: "#FF3355",
+      },
+      boxShadow: {
+        pop: "4px 4px 0 0 #111114",
+        "pop-sm": "3px 3px 0 0 #111114",
+        "pop-lg": "6px 6px 0 0 #111114",
+      },
+      borderWidth: {
+        3: "3px",
+      },
+      keyframes: {
+        wiggle: {
+          "0%, 100%": { transform: "rotate(-1deg)" },
+          "50%": { transform: "rotate(1deg)" },
+        },
+        blink: {
+          "0%, 100%": { opacity: 1 },
+          "50%": { opacity: 0.3 },
+        },
+      },
+      animation: {
+        wiggle: "wiggle 1.4s ease-in-out infinite",
+        blink: "blink 1.6s ease-in-out infinite",
       },
     },
   },
