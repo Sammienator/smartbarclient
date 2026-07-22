@@ -29,12 +29,12 @@ export default function LowStockPage() {
     <Section title={`Low stock (below ${threshold})`} accent="ink">
       {error && <p className="text-danger text-sm mb-3">{error}</p>}
       {items.length === 0 ? (
-        <p className="text-ink/40 text-sm">Everything is well stocked.</p>
+        <p className="text-ink/40 dark:text-paper/40 text-sm">Everything is well stocked.</p>
       ) : (
         <ul className="space-y-1.5">
           {items.map((it) => (
             <li key={it._id} className="flex justify-between items-center text-sm border-2 border-danger/20 bg-danger/5 rounded-lg px-3 py-2">
-              <span className="text-ink font-medium">{it.name}</span>
+              <span className="text-ink dark:text-paper font-medium">{it.name}</span>
               <span className="font-mono font-bold text-danger">{it.stockQty} left</span>
             </li>
           ))}

@@ -62,20 +62,20 @@ export default function StationApp({ station }) {
   const pendingCount = orders.reduce((sum, o) => sum + o.items.length, 0);
 
   return (
-    <div className="min-h-screen bg-ink pb-10 relative overflow-hidden">
-      <div className="pointer-events-none absolute inset-0 urban-dots opacity-[0.05] text-paper" aria-hidden="true" />
-      <NavBar dark />
+    <div className="min-h-screen bg-paper dark:bg-ink pb-10 relative overflow-hidden transition-colors">
+      <div className="pointer-events-none absolute inset-0 urban-dots opacity-[0.04] text-ink dark:text-paper" aria-hidden="true" />
+      <NavBar />
       <div className="h-1.5 urban-gradient" aria-hidden="true" />
       <header className="relative px-5 pt-6 pb-6 flex items-center justify-between">
         <div className="flex items-center gap-3">
           {Icon && (
-            <div className={`w-11 h-11 rounded-xl bg-ink-soft border-2 border-ink-line flex items-center justify-center ${STATION_ACCENTS[station]}`}>
+            <div className={`w-11 h-11 rounded-xl bg-white dark:bg-ink-soft border-2 border-ink/15 dark:border-ink-line flex items-center justify-center ${STATION_ACCENTS[station]}`}>
               <Icon size={22} strokeWidth={2.25} />
             </div>
           )}
           <div>
-            <p className="font-mono text-xs uppercase tracking-widest text-paper/40">Smart Bar</p>
-            <h1 className="font-display font-bold text-2xl text-paper mt-1">
+            <p className="font-mono text-xs uppercase tracking-widest text-ink/40 dark:text-paper/40">Smart Bar</p>
+            <h1 className="font-display font-bold text-2xl text-ink dark:text-paper mt-1">
               {STATION_LABELS[station] || station}
             </h1>
           </div>
@@ -89,19 +89,21 @@ export default function StationApp({ station }) {
 
       {error && <p className="relative px-5 text-danger text-sm mb-4">{error}</p>}
 
-      <div className="relative px-5 space-y-3">
-        {loading && <p className="text-paper/40 text-sm">Loading orders…</p>}
+      <div className="relative px-5">
+        {loading && <p className="text-ink/40 dark:text-paper/40 text-sm">Loading orders…</p>}
         {!loading && orders.length === 0 && (
-          <p className="text-paper/40 text-sm">Nothing pending right now.</p>
+          <p className="text-ink/40 dark:text-paper/40 text-sm">Nothing pending right now.</p>
         )}
-        {orders.map((order) => (
-          <StationOrderCard
-            key={order.orderId}
-            station={station}
-            order={order}
-            onItemReady={setError}
-          />
-        ))}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {orders.map((order) => (
+            <StationOrderCard
+              key={order.orderId}
+              station={station}
+              order={order}
+              onItemReady={setError}
+            />
+          ))}
+        </div>
       </div>
     </div>
   );

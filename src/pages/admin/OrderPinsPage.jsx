@@ -32,16 +32,16 @@ export default function OrderPinsPage() {
 
   return (
     <Section title="Order PINs (forgot-PIN lookup)" accent="copper">
-      <p className="text-xs text-ink/40 mb-3">
+      <p className="text-xs text-ink/40 dark:text-paper/40 mb-3">
         For staff use only - look up a guest's PIN here if they've misplaced it.
       </p>
       {error && <p className="text-danger text-sm mb-3">{error}</p>}
       {orders.length === 0 ? (
-        <p className="text-ink/40 text-sm">No active orders right now.</p>
+        <p className="text-ink/40 dark:text-paper/40 text-sm">No active orders right now.</p>
       ) : (
         <table className="w-full text-sm">
           <thead>
-            <tr className="text-left text-ink/40 text-xs uppercase tracking-wide border-b-2 border-ink/10">
+            <tr className="text-left text-ink/40 dark:text-paper/40 text-xs uppercase tracking-wide border-b-2 border-ink/10">
               <th className="pb-2">Table</th>
               <th className="pb-2">PIN</th>
               <th className="pb-2">Waiter</th>
@@ -51,14 +51,14 @@ export default function OrderPinsPage() {
           <tbody>
             {orders.map((o) => (
               <tr key={o.orderId} className="border-t border-ink/5">
-                <td className="py-2 text-ink font-medium">{o.tableNumber}</td>
+                <td className="py-2 text-ink dark:text-paper font-medium">{o.tableNumber}</td>
                 <td className="py-2">
-                  <span className="inline-flex items-center gap-1 font-mono font-bold text-ink tracking-widest bg-amber/30 border border-ink/20 rounded-md px-2 py-0.5">
+                  <span className="inline-flex items-center gap-1 font-mono font-bold text-ink dark:text-paper tracking-widest bg-amber/30 border border-ink/20 rounded-md px-2 py-0.5">
                     <KeyRound size={11} /> {o.pin}
                   </span>
                 </td>
-                <td className="py-2 text-ink/70">{o.waiterName}</td>
-                <td className="py-2 text-ink/50">
+                <td className="py-2 text-ink/70 dark:text-paper/70">{o.waiterName}</td>
+                <td className="py-2 text-ink/50 dark:text-paper/50">
                   {(o.items || []).map((it) => `${it.quantity}× ${it.name}`).join(", ")}
                 </td>
               </tr>

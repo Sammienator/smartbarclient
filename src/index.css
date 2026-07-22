@@ -9,6 +9,12 @@ html, body, #root {
 body {
   font-family: 'Inter', system-ui, sans-serif;
   background-color: #f8f6ef;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.dark body {
+  background-color: #111114;
+  color: #f8f6ef;
 }
 
 .font-display {

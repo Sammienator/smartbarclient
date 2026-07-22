@@ -21,12 +21,12 @@ const LINKS = [
 ];
 
 const ACCENTS = {
-  amber: { stripe: "bg-amber", wrap: "bg-amber/20 text-amber-deep group-hover:bg-amber group-hover:text-ink" },
+  amber: { stripe: "bg-amber", wrap: "bg-amber/20 text-amber-deep group-hover:bg-amber group-hover:text-ink dark:text-paper dark:hover:text-paper" },
   copper: { stripe: "bg-copper", wrap: "bg-copper/15 text-copper group-hover:bg-copper group-hover:text-paper" },
   electric: { stripe: "bg-electric", wrap: "bg-electric/15 text-electric group-hover:bg-electric group-hover:text-paper" },
-  moss: { stripe: "bg-moss", wrap: "bg-moss/20 text-moss-deep group-hover:bg-moss group-hover:text-ink" },
+  moss: { stripe: "bg-moss", wrap: "bg-moss/20 text-moss-deep group-hover:bg-moss group-hover:text-ink dark:text-paper dark:hover:text-paper" },
   danger: { stripe: "bg-danger", wrap: "bg-danger/10 text-danger group-hover:bg-danger group-hover:text-paper" },
-  ink: { stripe: "bg-ink", wrap: "bg-ink/5 text-ink group-hover:bg-ink group-hover:text-paper" },
+  ink: { stripe: "bg-ink", wrap: "bg-ink/5 text-ink dark:text-paper group-hover:bg-ink group-hover:text-paper" },
 };
 
 export default function AdminHome() {
@@ -45,15 +45,15 @@ export default function AdminHome() {
           >
             <Link
               to={l.to}
-              className="group relative flex items-start gap-4 bg-white rounded-2xl border-3 border-ink p-5 overflow-hidden shadow-pop hover:shadow-pop-lg transition-all duration-150"
+              className="group relative flex items-start gap-4 bg-white dark:bg-ink-soft rounded-2xl border-3 border-ink dark:border-ink-line p-5 overflow-hidden shadow-pop hover:shadow-pop-lg transition-all duration-150"
             >
               <div className={`absolute top-0 left-0 h-1.5 w-full ${styles.stripe}`} />
-              <div className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 border-2 border-ink transition-colors duration-200 ${styles.wrap}`}>
+              <div className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 border-2 border-ink dark:border-ink-line transition-colors duration-200 ${styles.wrap}`}>
                 <Icon size={20} strokeWidth={2.25} />
               </div>
               <div>
-                <p className="font-display font-bold text-ink text-lg">{l.label}</p>
-                <p className="text-ink/50 text-sm mt-1">{l.desc}</p>
+                <p className="font-display font-bold text-ink dark:text-paper text-lg">{l.label}</p>
+                <p className="text-ink/50 dark:text-paper/50 text-sm mt-1">{l.desc}</p>
               </div>
             </Link>
           </motion.div>

@@ -51,16 +51,16 @@ export default function WaiterApp() {
 
   if (!waiterId) {
     return (
-      <div className="min-h-screen bg-ink flex flex-col relative overflow-hidden">
-        <div className="pointer-events-none absolute inset-0 urban-dots opacity-[0.05] text-paper" aria-hidden="true" />
-        <NavBar dark />
+      <div className="min-h-screen bg-paper dark:bg-ink flex flex-col relative overflow-hidden transition-colors">
+        <div className="pointer-events-none absolute inset-0 urban-dots opacity-[0.04] text-ink dark:text-paper" aria-hidden="true" />
+        <NavBar />
         <div className="h-1.5 urban-gradient" aria-hidden="true" />
         <div className="flex-1 flex items-center justify-center p-6 relative">
         <div className="w-full max-w-xs">
           <span className="tag-sticker inline-block bg-amber text-ink font-tag text-[10px] uppercase tracking-widest px-3 py-1 rounded-md border-2 border-ink shadow-pop-sm mb-4">
             Smart Bar
           </span>
-          <h1 className="font-display font-bold text-2xl text-paper mb-6">Who's working?</h1>
+          <h1 className="font-display font-bold text-2xl text-ink dark:text-paper mb-6">Who's working?</h1>
           {error && <p className="text-danger text-sm mb-3">{error}</p>}
           <div className="space-y-2">
             {waiters.map((w, i) => (
@@ -72,25 +72,25 @@ export default function WaiterApp() {
                 whileHover={{ x: 3 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => setWaiterId(w._id)}
-                className="w-full flex items-center gap-3 text-left rounded-xl border-2 border-ink-line bg-ink-soft text-paper px-4 py-3 hover:border-amber transition-colors"
+                className="w-full flex items-center gap-3 text-left rounded-xl border-2 border-ink/15 dark:border-ink-line bg-white dark:bg-ink-soft text-ink dark:text-paper px-4 py-3 hover:border-amber transition-colors shadow-pop-sm"
               >
-                <div className="w-9 h-9 rounded-full bg-ink-line overflow-hidden shrink-0 flex items-center justify-center border-2 border-ink-line">
+                <div className="w-9 h-9 rounded-full bg-paper-dim dark:bg-ink overflow-hidden shrink-0 flex items-center justify-center border-2 border-ink/10 dark:border-ink-line">
                   {w.imageUrl ? (
                     <img src={w.imageUrl} alt="" className="w-full h-full object-cover" />
                   ) : (
-                    <span className="text-paper/40 text-xs font-display font-semibold">
+                    <span className="text-ink/40 dark:text-paper/40 text-xs font-display font-semibold">
                       {w.name?.[0]?.toUpperCase()}
                     </span>
                   )}
                 </div>
                 <span>
                   {w.name}
-                  {w.zone && <span className="text-paper/40 text-sm"> · {w.zone}</span>}
+                  {w.zone && <span className="text-ink/40 dark:text-paper/40 text-sm"> · {w.zone}</span>}
                 </span>
               </motion.button>
             ))}
             {waiters.length === 0 && (
-              <p className="text-paper/40 text-sm">No waiters found. Add one from the admin dashboard.</p>
+              <p className="text-ink/40 dark:text-paper/40 text-sm">No waiters found. Add one from the admin dashboard.</p>
             )}
           </div>
         </div>
@@ -102,24 +102,24 @@ export default function WaiterApp() {
   const currentWaiter = waiters.find((w) => w._id === waiterId);
 
   return (
-    <div className="min-h-screen bg-ink pb-10 relative overflow-hidden">
-      <div className="pointer-events-none absolute inset-0 urban-dots opacity-[0.05] text-paper" aria-hidden="true" />
-      <NavBar dark />
+    <div className="min-h-screen bg-paper dark:bg-ink pb-10 relative overflow-hidden transition-colors">
+      <div className="pointer-events-none absolute inset-0 urban-dots opacity-[0.04] text-ink dark:text-paper" aria-hidden="true" />
+      <NavBar />
       <div className="h-1.5 urban-gradient" aria-hidden="true" />
       <header className="relative px-5 pt-6 pb-6 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-11 h-11 rounded-full bg-ink-soft border-2 border-amber overflow-hidden shrink-0 flex items-center justify-center">
+          <div className="w-11 h-11 rounded-full bg-white dark:bg-ink-soft border-2 border-amber overflow-hidden shrink-0 flex items-center justify-center">
             {currentWaiter?.imageUrl ? (
               <img src={currentWaiter.imageUrl} alt="" className="w-full h-full object-cover" />
             ) : (
-              <span className="text-paper/40 text-sm font-display font-semibold">
+              <span className="text-ink/40 dark:text-paper/40 text-sm font-display font-semibold">
                 {currentWaiter?.name?.[0]?.toUpperCase() || "?"}
               </span>
             )}
           </div>
           <div>
-            <p className="font-mono text-xs uppercase tracking-widest text-paper/40">Smart Bar</p>
-            <h1 className="font-display font-bold text-2xl text-paper mt-1">
+            <p className="font-mono text-xs uppercase tracking-widest text-ink/40 dark:text-paper/40">Smart Bar</p>
+            <h1 className="font-display font-bold text-2xl text-ink dark:text-paper mt-1">
               {currentWaiter?.name || "Waiter"}
             </h1>
           </div>
@@ -130,21 +130,23 @@ export default function WaiterApp() {
             setWaiterId("");
             setOrders([]);
           }}
-          className="text-paper/50 text-sm hover:text-paper flex items-center gap-1.5 border-2 border-ink-line rounded-lg px-3 py-1.5 hover:border-amber transition-colors"
+          className="text-ink/60 dark:text-paper/60 text-sm hover:text-ink dark:hover:text-paper flex items-center gap-1.5 border-2 border-ink/15 dark:border-ink-line rounded-lg px-3 py-1.5 hover:border-amber transition-colors"
         >
           <LogOut size={13} /> Switch
         </button>
       </header>
 
-      <div className="relative px-5 space-y-3">
-        {error && <p className="text-danger text-sm">{error}</p>}
-        {loading && <p className="text-paper/40 text-sm">Loading orders…</p>}
+      <div className="relative px-5">
+        {error && <p className="text-danger text-sm mb-3">{error}</p>}
+        {loading && <p className="text-ink/40 dark:text-paper/40 text-sm">Loading orders…</p>}
         {!loading && orders.length === 0 && (
-          <p className="text-paper/40 text-sm">No active orders right now.</p>
+          <p className="text-ink/40 dark:text-paper/40 text-sm">No active orders right now.</p>
         )}
-        {orders.map((order) => (
-          <WaiterOrderCard key={order.orderId || order._id} order={order} onEnded={handleEnded} />
-        ))}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {orders.map((order) => (
+            <WaiterOrderCard key={order.orderId || order._id} order={order} onEnded={handleEnded} />
+          ))}
+        </div>
       </div>
     </div>
   );

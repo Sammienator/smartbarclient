@@ -19,7 +19,7 @@ function BestSellerTooltip({ active, payload }) {
   if (!active || !payload || payload.length === 0) return null;
   const d = payload[0].payload;
   return (
-    <div className="bg-ink text-paper rounded-lg px-3 py-2 text-xs shadow-pop border-2 border-ink">
+    <div className="bg-ink text-paper rounded-lg px-3 py-2 text-xs shadow-pop border-2 border-ink dark:border-ink-line">
       <p className="font-mono text-paper/50 mb-1">{d.name}</p>
       <p>Sold: <span className="font-mono">{d.totalQuantitySold}</span></p>
       <p>Revenue: <span className="font-mono">KES {d.totalRevenue.toLocaleString()}</span></p>
@@ -50,18 +50,18 @@ export default function BestSellersPage() {
     <Section title="Best sellers" accent="moss">
       {error && <p className="text-danger text-sm mb-3">{error}</p>}
       <div className="flex gap-2 mb-4 items-end">
-        <label className="text-xs text-ink/50">
+        <label className="text-xs text-ink/50 dark:text-paper/50">
           From
-          <input type="date" value={start} onChange={(e) => setStart(e.target.value)} className="block border-2 border-ink/15 rounded-lg px-2 py-1 mt-1 focus:outline-none focus:border-ink" />
+          <input type="date" value={start} onChange={(e) => setStart(e.target.value)} className="block border-2 border-ink/15 dark:border-ink-line rounded-lg px-2 py-1 mt-1 focus:outline-none focus:border-ink dark:border-ink-line" />
         </label>
-        <label className="text-xs text-ink/50">
+        <label className="text-xs text-ink/50 dark:text-paper/50">
           To
-          <input type="date" value={end} onChange={(e) => setEnd(e.target.value)} className="block border-2 border-ink/15 rounded-lg px-2 py-1 mt-1 focus:outline-none focus:border-ink" />
+          <input type="date" value={end} onChange={(e) => setEnd(e.target.value)} className="block border-2 border-ink/15 dark:border-ink-line rounded-lg px-2 py-1 mt-1 focus:outline-none focus:border-ink dark:border-ink-line" />
         </label>
-        <button onClick={load} className="rounded-lg bg-amber text-ink border-2 border-ink font-display font-semibold text-sm px-3 py-1.5">Filter</button>
+        <button onClick={load} className="rounded-lg bg-amber text-ink dark:text-paper border-2 border-ink dark:border-ink-line font-display font-semibold text-sm px-3 py-1.5">Filter</button>
       </div>
       {rows.length === 0 ? (
-        <p className="text-ink/40 text-sm">No completed orders in this range.</p>
+        <p className="text-ink/40 dark:text-paper/40 text-sm">No completed orders in this range.</p>
       ) : (
         <>
           <div style={{ height: Math.max(180, rows.length * 40) }} className="-ml-2 mb-5">
@@ -88,8 +88,8 @@ export default function BestSellersPage() {
           <ol className="space-y-1.5">
             {rows.map((r, i) => (
               <li key={r._id} className="flex justify-between text-sm">
-                <span className="text-ink"><span className="text-ink/30 font-mono mr-2">{i + 1}</span>{r.name}</span>
-                <span className="font-mono text-ink/60">{r.totalQuantitySold} sold · KES {r.totalRevenue}</span>
+                <span className="text-ink dark:text-paper"><span className="text-ink/30 dark:text-paper/30 font-mono mr-2">{i + 1}</span>{r.name}</span>
+                <span className="font-mono text-ink/60 dark:text-paper/60">{r.totalQuantitySold} sold · KES {r.totalRevenue}</span>
               </li>
             ))}
           </ol>

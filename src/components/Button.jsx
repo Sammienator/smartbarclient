@@ -1,14 +1,14 @@
 import { motion } from "framer-motion";
 
 const VARIANTS = {
-  primary: "bg-ink text-paper border-ink hover:bg-ink-soft",
-  amber: "bg-amber text-ink border-ink hover:bg-amber-deep hover:text-paper",
-  copper: "bg-copper text-paper border-ink hover:brightness-110",
-  electric: "bg-electric text-paper border-ink hover:brightness-110",
-  moss: "bg-moss text-ink border-ink hover:brightness-105",
-  outline: "bg-paper text-ink border-ink hover:bg-ink/5",
-  ghost: "bg-transparent text-ink/60 border-transparent shadow-none hover:text-ink hover:bg-ink/5",
-  danger: "bg-danger text-paper border-ink hover:brightness-110",
+  primary: "bg-ink text-paper border-ink dark:border-ink-line hover:bg-ink-soft",
+  amber: "bg-amber text-ink border-ink dark:border-ink-line hover:bg-amber-deep hover:text-paper",
+  copper: "bg-copper text-paper border-ink dark:border-ink-line hover:brightness-110",
+  electric: "bg-electric text-paper border-ink dark:border-ink-line hover:brightness-110",
+  moss: "bg-moss text-ink border-ink dark:border-ink-line hover:brightness-105",
+  outline: "bg-paper dark:bg-ink-soft text-ink dark:text-paper border-ink dark:border-ink-line hover:bg-ink/5 dark:hover:bg-paper/5",
+  ghost: "bg-transparent text-ink/60 dark:text-paper/60 border-transparent shadow-none hover:text-ink dark:hover:text-paper hover:bg-ink/5 dark:hover:bg-paper/5",
+  danger: "bg-danger text-paper border-ink dark:border-ink-line hover:brightness-110",
 };
 
 // Thin wrapper around framer-motion's <button> that gives every button in

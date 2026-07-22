@@ -48,7 +48,7 @@ export default function ImageUploader({ value, onUploaded, label = "Photo", shap
 
   return (
     <div>
-      {label && <p className="text-xs font-medium text-ink/50 mb-1.5">{label}</p>}
+      {label && <p className="text-xs font-medium text-ink/50 dark:text-paper/50 mb-1.5">{label}</p>}
       <div
         onClick={() => !uploading && inputRef.current?.click()}
         onDragOver={(e) => {
@@ -62,7 +62,7 @@ export default function ImageUploader({ value, onUploaded, label = "Photo", shap
           handleFile(e.dataTransfer.files?.[0]);
         }}
         className={`relative w-28 h-28 ${shapeClass} border-3 border-dashed cursor-pointer overflow-hidden flex items-center justify-center transition-colors ${
-          dragOver ? "border-copper bg-copper/10" : "border-ink/25 bg-paper-dim hover:border-ink"
+          dragOver ? "border-copper bg-copper/10" : "border-ink/25 bg-paper-dim dark:bg-ink hover:border-ink dark:border-ink-line dark:hover:border-paper"
         }`}
       >
         <input
@@ -90,7 +90,7 @@ export default function ImageUploader({ value, onUploaded, label = "Photo", shap
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="flex flex-col items-center gap-1 text-ink/35"
+              className="flex flex-col items-center gap-1 text-ink/35 dark:text-paper/35"
             >
               <Camera size={20} strokeWidth={1.75} />
               <span className="text-[10px] font-medium">Add photo</span>
@@ -120,7 +120,7 @@ export default function ImageUploader({ value, onUploaded, label = "Photo", shap
         )}
 
         {!preview && !uploading && (
-          <div className="absolute bottom-1 right-1 text-ink/25">
+          <div className="absolute bottom-1 right-1 text-ink/25 dark:text-paper/25">
             <Upload size={12} />
           </div>
         )}

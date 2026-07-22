@@ -28,7 +28,7 @@ export default function MenuItemCard({ item, onAdd }) {
       exit={{ opacity: 0, y: -6 }}
       transition={{ duration: 0.28, ease: "easeOut" }}
       whileHover={{ y: -3 }}
-      className="relative rounded-2xl bg-white border-3 border-ink p-3 flex flex-col shadow-pop hover:shadow-pop-lg transition-shadow"
+      className="relative rounded-2xl bg-white dark:bg-ink-soft border-3 border-ink dark:border-ink-line p-3 flex flex-col shadow-pop hover:shadow-pop-lg transition-shadow"
     >
       {lowStock && (
         <span className="tag-sticker absolute -top-2.5 -right-2.5 z-10 bg-danger text-paper text-[10px] font-tag px-2 py-1 rounded-md border-2 border-ink shadow-pop-sm flex items-center gap-1">
@@ -36,21 +36,26 @@ export default function MenuItemCard({ item, onAdd }) {
         </span>
       )}
 
-      <div className="aspect-square w-full rounded-xl bg-paper-dim overflow-hidden flex items-center justify-center mb-3 border-2 border-ink/10">
+      <div className="aspect-square w-full rounded-xl bg-paper-dim dark:bg-ink overflow-hidden flex items-center justify-center mb-3 border-2 border-ink/10 dark:border-ink-line">
         {item.imageUrl ? (
           <img src={item.imageUrl} alt={item.name} className="w-full h-full object-cover" />
         ) : (
-          <span className="text-ink/25 text-xs font-mono">no image</span>
+          <span className="text-ink/25 dark:text-paper/25 text-xs font-mono">no image</span>
         )}
       </div>
 
-      <p className="font-display font-bold text-ink text-sm leading-tight mb-1 truncate">
+      <p className="font-display font-bold text-ink dark:text-paper text-sm leading-tight mb-1 truncate">
         {item.name}
       </p>
+      {item.description && (
+        <p className="text-ink/45 dark:text-paper/45 text-xs leading-snug mb-2 line-clamp-2">
+          {item.description}
+        </p>
+      )}
       <div className="flex items-center justify-between mb-3">
-        <span className="text-ink font-mono font-semibold text-sm">KES {item.price}</span>
+        <span className="text-ink dark:text-paper font-mono font-semibold text-sm">KES {item.price}</span>
         {!lowStock && (
-          <span className={"text-xs font-mono " + (outOfStock ? "text-ink/35" : "text-ink/40")}>
+          <span className={"text-xs font-mono " + (outOfStock ? "text-ink/35 dark:text-paper/35" : "text-ink/40 dark:text-paper/40")}>
             {outOfStock ? "sold out" : `${item.stockQty} left`}
           </span>
         )}
@@ -59,7 +64,7 @@ export default function MenuItemCard({ item, onAdd }) {
       {outOfStock ? (
         <button
           disabled
-          className="w-full rounded-lg bg-ink/5 text-ink/35 text-sm font-medium py-2 cursor-not-allowed mt-auto border-2 border-ink/10"
+          className="w-full rounded-lg bg-ink/5 dark:bg-paper/5 text-ink/35 dark:text-paper/35 text-sm font-medium py-2 cursor-not-allowed mt-auto border-2 border-ink/10 dark:border-paper/10"
         >
           Unavailable
         </button>
@@ -69,15 +74,15 @@ export default function MenuItemCard({ item, onAdd }) {
             <button
               onClick={decrement}
               aria-label={`Decrease quantity of ${item.name}`}
-              className="w-7 h-7 rounded-lg border-2 border-ink text-ink hover:bg-ink hover:text-paper transition-colors flex items-center justify-center"
+              className="w-7 h-7 rounded-lg border-2 border-ink dark:border-ink-line text-ink dark:text-paper hover:bg-ink hover:text-paper dark:hover:bg-paper dark:hover:text-ink transition-colors flex items-center justify-center"
             >
               <Minus size={13} strokeWidth={2.5} />
             </button>
-            <span className="w-5 text-center text-sm font-mono font-semibold text-ink">{qty}</span>
+            <span className="w-5 text-center text-sm font-mono font-semibold text-ink dark:text-paper">{qty}</span>
             <button
               onClick={increment}
               aria-label={`Increase quantity of ${item.name}`}
-              className="w-7 h-7 rounded-lg border-2 border-ink text-ink hover:bg-ink hover:text-paper transition-colors flex items-center justify-center"
+              className="w-7 h-7 rounded-lg border-2 border-ink dark:border-ink-line text-ink dark:text-paper hover:bg-ink hover:text-paper dark:hover:bg-paper dark:hover:text-ink transition-colors flex items-center justify-center"
             >
               <Plus size={13} strokeWidth={2.5} />
             </button>
@@ -86,7 +91,7 @@ export default function MenuItemCard({ item, onAdd }) {
             onClick={handleAdd}
             whileTap={{ scale: 0.96 }}
             animate={justAdded ? { backgroundColor: "#17C978" } : {}}
-            className="w-full rounded-lg bg-ink text-paper text-sm font-display font-semibold py-2 border-2 border-ink hover:bg-ink-soft transition-colors"
+            className="w-full rounded-lg bg-ink text-paper text-sm font-display font-semibold py-2 border-2 border-ink dark:border-ink-line hover:bg-ink-soft transition-colors"
           >
             {justAdded ? "Added ✓" : "Add"}
           </motion.button>

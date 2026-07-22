@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { UtensilsCrossed, Martini, ArrowLeft } from "lucide-react";
+import { UtensilsCrossed, Martini, ArrowLeft, ArrowLeftRight } from "lucide-react";
 import api from "../lib/api";
 import { socket } from "../lib/socket";
 import { asArray } from "../lib/asArray";
@@ -8,6 +8,7 @@ import MenuItemCard from "../components/MenuItemCard";
 import CartBar from "../components/CartBar";
 import PinTicket from "../components/PinTicket";
 import NavBar from "../components/NavBar";
+import Button from "../components/Button";
 
 // Table selection: a guest picks their table from a list rather than
 // scanning a QR code or following a link (no QR code service required).
@@ -15,8 +16,8 @@ import NavBar from "../components/NavBar";
 // anyone who does set up QR codes later - it just pre-fills the choice.
 function TablePicker({ tables, loading, onSelect }) {
   return (
-    <div className="min-h-screen flex flex-col bg-paper relative overflow-hidden">
-      <div className="pointer-events-none absolute inset-0 urban-dots opacity-[0.04] text-ink" aria-hidden="true" />
+    <div className="min-h-screen flex flex-col bg-paper dark:bg-ink relative overflow-hidden transition-colors">
+      <div className="pointer-events-none absolute inset-0 urban-dots opacity-[0.04] text-ink dark:text-paper" aria-hidden="true" />
       <NavBar />
       <div className="h-1.5 urban-gradient" aria-hidden="true" />
       <div className="flex-1 flex items-center justify-center p-6 relative">
@@ -29,12 +30,12 @@ function TablePicker({ tables, loading, onSelect }) {
           <span className="tag-sticker inline-block bg-ink text-paper font-tag text-[10px] uppercase tracking-widest px-3 py-1 rounded-md border-2 border-ink shadow-pop-sm mb-4">
             Smart Bar
           </span>
-          <h1 className="font-display font-bold text-2xl text-ink mb-6">Which table are you at?</h1>
+          <h1 className="font-display font-bold text-2xl text-ink dark:text-paper mb-6">Which table are you at?</h1>
 
           {loading ? (
-            <p className="text-ink/50 text-sm">Loading tables…</p>
+            <p className="text-ink/50 dark:text-paper/50 text-sm">Loading tables…</p>
           ) : tables.length === 0 ? (
-            <p className="text-ink/50 text-sm">
+            <p className="text-ink/50 dark:text-paper/50 text-sm">
               No tables have been set up yet. Ask a staff member, or add one from the admin dashboard.
             </p>
           ) : (
@@ -48,7 +49,7 @@ function TablePicker({ tables, loading, onSelect }) {
                   whileHover={{ y: -3 }}
                   whileTap={{ y: 1, x: 1 }}
                   onClick={() => onSelect(t.tableNumber)}
-                  className="aspect-square rounded-xl border-3 border-ink bg-white font-display font-bold text-ink shadow-pop hover:bg-amber hover:shadow-pop-lg transition-colors"
+                  className="aspect-square rounded-xl border-3 border-ink dark:border-ink-line bg-white dark:bg-ink-soft font-display font-bold text-ink dark:text-paper shadow-pop hover:bg-amber hover:text-ink hover:shadow-pop-lg transition-colors"
                 >
                   {t.tableNumber}
                 </motion.button>
@@ -68,31 +69,31 @@ function TablePicker({ tables, loading, onSelect }) {
 // here after each order to place another (of either category).
 function CategoryPicker({ tableNumber, onSelect, onChangeTable }) {
   return (
-    <div className="min-h-screen flex flex-col bg-paper relative overflow-hidden">
-      <div className="pointer-events-none absolute inset-0 urban-dots opacity-[0.04] text-ink" aria-hidden="true" />
+    <div className="min-h-screen flex flex-col bg-paper dark:bg-ink relative overflow-hidden transition-colors">
+      <div className="pointer-events-none absolute inset-0 urban-dots opacity-[0.04] text-ink dark:text-paper" aria-hidden="true" />
       <NavBar />
-      <div className="flex-1 flex items-center justify-center p-6 relative">
+      <div className="flex-1 flex flex-col items-center justify-center p-6 relative">
         <div className="w-full max-w-sm text-center">
-          <p className="font-mono text-xs uppercase tracking-widest text-ink/40 mb-2">
+          <p className="font-mono text-xs uppercase tracking-widest text-ink/40 dark:text-paper/40 mb-2">
             Table {tableNumber}
           </p>
-          <h1 className="font-display font-bold text-2xl text-ink mb-8">What are you ordering?</h1>
+          <h1 className="font-display font-bold text-2xl text-ink dark:text-paper mb-8">What are you ordering?</h1>
 
           <div className="grid grid-cols-1 gap-4">
             <motion.button
               whileHover={{ y: -3 }}
               whileTap={{ y: 1, x: 1 }}
               onClick={() => onSelect("food")}
-              className="relative rounded-2xl border-3 border-ink bg-white px-6 py-8 shadow-pop hover:shadow-pop-lg hover:bg-copper/10 transition-all overflow-hidden text-left"
+              className="relative rounded-2xl border-3 border-ink dark:border-ink-line bg-white dark:bg-ink-soft px-6 py-8 shadow-pop hover:shadow-pop-lg hover:bg-copper/10 dark:hover:bg-copper/10 transition-all overflow-hidden text-center"
             >
               <div className="absolute top-0 left-0 h-1.5 w-full bg-copper" aria-hidden="true" />
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-copper/15 border-2 border-ink flex items-center justify-center shrink-0">
+              <div className="flex flex-col items-center gap-3 text-center">
+                <div className="w-12 h-12 rounded-xl bg-copper/15 border-2 border-ink dark:border-ink-line flex items-center justify-center shrink-0">
                   <UtensilsCrossed size={22} className="text-copper" strokeWidth={2.25} />
                 </div>
                 <div>
-                  <span className="block font-display font-bold text-xl text-ink mb-1">Food</span>
-                  <span className="block text-ink/50 text-sm">Order from the kitchen menu</span>
+                  <span className="block font-display font-bold text-xl text-ink dark:text-paper mb-1">Food</span>
+                  <span className="block text-ink/50 dark:text-paper/50 text-sm">Order from the kitchen menu</span>
                 </div>
               </div>
             </motion.button>
@@ -100,24 +101,26 @@ function CategoryPicker({ tableNumber, onSelect, onChangeTable }) {
               whileHover={{ y: -3 }}
               whileTap={{ y: 1, x: 1 }}
               onClick={() => onSelect("drink")}
-              className="relative rounded-2xl border-3 border-ink bg-white px-6 py-8 shadow-pop hover:shadow-pop-lg hover:bg-electric/10 transition-all overflow-hidden text-left"
+              className="relative rounded-2xl border-3 border-ink dark:border-ink-line bg-white dark:bg-ink-soft px-6 py-8 shadow-pop hover:shadow-pop-lg hover:bg-electric/10 dark:hover:bg-electric/10 transition-all overflow-hidden text-center"
             >
               <div className="absolute top-0 left-0 h-1.5 w-full bg-electric" aria-hidden="true" />
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-electric/15 border-2 border-ink flex items-center justify-center shrink-0">
+              <div className="flex flex-col items-center gap-3 text-center">
+                <div className="w-12 h-12 rounded-xl bg-electric/15 border-2 border-ink dark:border-ink-line flex items-center justify-center shrink-0">
                   <Martini size={22} className="text-electric" strokeWidth={2.25} />
                 </div>
                 <div>
-                  <span className="block font-display font-bold text-xl text-ink mb-1">Drinks</span>
-                  <span className="block text-ink/50 text-sm">Order from the bar menu</span>
+                  <span className="block font-display font-bold text-xl text-ink dark:text-paper mb-1">Drinks</span>
+                  <span className="block text-ink/50 dark:text-paper/50 text-sm">Order from the bar menu</span>
                 </div>
               </div>
             </motion.button>
           </div>
 
-          <button onClick={onChangeTable} className="text-xs text-ink/40 hover:text-ink underline mt-8 flex items-center gap-1 mx-auto">
-            <ArrowLeft size={12} /> Change table
-          </button>
+          <div className="mt-14">
+            <Button variant="outline" onClick={onChangeTable} className="px-4 py-2 text-sm inline-flex items-center gap-1.5">
+              <ArrowLeft size={13} /> Change table
+            </Button>
+          </div>
         </div>
       </div>
     </div>
@@ -255,25 +258,24 @@ export default function GuestApp() {
   const visibleItems = menu.filter((m) => m.category === category);
 
   return (
-    <div className="min-h-screen pb-40 bg-paper relative">
-      <div className="pointer-events-none absolute inset-0 urban-dots opacity-[0.03] text-ink" aria-hidden="true" />
+    <div className="min-h-screen pb-40 bg-paper dark:bg-ink relative transition-colors">
+      <div className="pointer-events-none absolute inset-0 urban-dots opacity-[0.03] text-ink dark:text-paper" aria-hidden="true" />
       <NavBar />
       <div className="h-1.5 urban-gradient" aria-hidden="true" />
-      <header className="relative px-5 pt-6 pb-6 flex items-start justify-between">
+      <header className="relative px-5 pt-6 pb-6 flex items-start justify-between gap-3">
         <div>
           <span className="tag-sticker inline-block bg-ink text-paper font-mono text-[10px] uppercase tracking-widest px-2.5 py-1 rounded-md border-2 border-ink mb-2">
             Table {tableNumber} · {categoryLabel}
           </span>
-          <h1 className="font-tag text-3xl text-ink mt-1">Smart Bar</h1>
+          <h1 className="font-tag text-3xl text-ink dark:text-paper mt-1">Smart Bar</h1>
         </div>
-        <div className="flex flex-col items-end gap-1 mt-1">
-          <button onClick={changeCategory} className="text-xs text-ink/40 hover:text-ink underline">
-            Switch menu
-          </button>
-          <button onClick={changeTable} className="text-xs text-ink/40 hover:text-ink underline">
-            Change table
-          </button>
-        </div>
+        <Button
+          variant="outline"
+          onClick={changeCategory}
+          className="mt-1 px-3.5 py-2 text-sm shrink-0 inline-flex items-center gap-1.5"
+        >
+          <ArrowLeftRight size={14} /> Switch menu
+        </Button>
       </header>
 
       {error && (
@@ -281,13 +283,13 @@ export default function GuestApp() {
       )}
 
       {loading ? (
-        <p className="px-5 text-ink/50 text-sm">Loading menu…</p>
+        <p className="px-5 text-ink/50 dark:text-paper/50 text-sm">Loading menu…</p>
       ) : (
         <div className="px-5 relative">
           {visibleItems.length === 0 ? (
-            <p className="text-ink/50 text-sm">Nothing available in this menu right now.</p>
+            <p className="text-ink/50 dark:text-paper/50 text-sm">Nothing available in this menu right now.</p>
           ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 gap-4">
               <AnimatePresence mode="popLayout">
                 {visibleItems.map((item) => (
                   <MenuItemCard key={item._id} item={item} onAdd={addToCart} />

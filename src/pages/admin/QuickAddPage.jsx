@@ -29,7 +29,7 @@ function MenuItemList({ items, onDeleted }) {
   }
 
   if (items.length === 0) {
-    return <p className="text-ink/40 text-sm">No menu items yet.</p>;
+    return <p className="text-ink/40 dark:text-paper/40 text-sm">No menu items yet.</p>;
   }
 
   return (
@@ -44,20 +44,23 @@ function MenuItemList({ items, onDeleted }) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, x: -12 }}
             transition={{ duration: 0.2 }}
-            className="flex items-center gap-3 rounded-xl border-2 border-ink/15 px-3 py-2 hover:border-ink/30 transition-colors"
+            className="flex items-center gap-3 rounded-xl border-2 border-ink/15 dark:border-ink-line px-3 py-2 hover:border-ink/30 dark:border-ink-line transition-colors"
           >
-            <div className="w-9 h-9 rounded-lg bg-paper-dim overflow-hidden shrink-0 flex items-center justify-center">
+            <div className="w-9 h-9 rounded-lg bg-paper-dim dark:bg-ink overflow-hidden shrink-0 flex items-center justify-center">
               {item.imageUrl ? (
                 <img src={item.imageUrl} alt="" className="w-full h-full object-cover" />
               ) : (
-                <span className="text-ink/20 text-[9px] font-mono">n/a</span>
+                <span className="text-ink/20 dark:text-paper/20 text-[9px] font-mono">n/a</span>
               )}
             </div>
             <div className="text-sm flex-1 min-w-0">
-              <span className="text-ink font-medium">{item.name}</span>
-              <span className="text-ink/40 ml-2">
+              <span className="text-ink dark:text-paper font-medium">{item.name}</span>
+              <span className="text-ink/40 dark:text-paper/40 dark:text-paper/40 ml-2">
                 {item.category} · KES {item.price} · {item.stockQty} in stock
               </span>
+              {item.description && (
+                <p className="text-ink/40 dark:text-paper/40 dark:text-paper/40 text-xs mt-0.5 truncate">{item.description}</p>
+              )}
             </div>
             <button
               onClick={() => handleDelete(item)}
@@ -75,24 +78,24 @@ function MenuItemList({ items, onDeleted }) {
 
 function WaiterList({ waiters }) {
   if (waiters.length === 0) {
-    return <p className="text-ink/40 text-sm">No waiters yet.</p>;
+    return <p className="text-ink/40 dark:text-paper/40 text-sm">No waiters yet.</p>;
   }
   return (
     <div className="space-y-1.5">
       {waiters.map((w) => (
-        <div key={w._id} className="flex items-center gap-3 rounded-xl border-2 border-ink/15 px-3 py-2 hover:border-ink/30 transition-colors">
-          <div className="w-9 h-9 rounded-full bg-paper-dim overflow-hidden shrink-0 flex items-center justify-center">
+        <div key={w._id} className="flex items-center gap-3 rounded-xl border-2 border-ink/15 dark:border-ink-line px-3 py-2 hover:border-ink/30 dark:border-ink-line transition-colors">
+          <div className="w-9 h-9 rounded-full bg-paper-dim dark:bg-ink overflow-hidden shrink-0 flex items-center justify-center">
             {w.imageUrl ? (
               <img src={w.imageUrl} alt="" className="w-full h-full object-cover" />
             ) : (
-              <span className="text-ink/25 text-xs font-display font-semibold">
+              <span className="text-ink/25 dark:text-paper/25 text-xs font-display font-semibold">
                 {w.name?.[0]?.toUpperCase()}
               </span>
             )}
           </div>
           <div className="text-sm flex-1 min-w-0">
-            <span className="text-ink font-medium">{w.name}</span>
-            {w.zone && <span className="text-ink/40 ml-2">{w.zone}</span>}
+            <span className="text-ink dark:text-paper font-medium">{w.name}</span>
+            {w.zone && <span className="text-ink/40 dark:text-paper/40 ml-2">{w.zone}</span>}
           </div>
         </div>
       ))}
@@ -142,6 +145,7 @@ export default function QuickAddPage() {
           price: Number(form.get("price")),
           stockQty: Number(form.get("stockQty")),
           imageUrl: itemImageUrl,
+          description: form.get("description"),
         });
         loadMenu();
       } else if (tab === "waiter") {
@@ -175,13 +179,13 @@ export default function QuickAddPage() {
               key={t}
               onClick={() => setTab(t)}
               className={`relative text-sm px-3 py-1.5 rounded-lg font-medium transition-colors ${
-                tab === t ? "text-paper" : "text-ink/60 hover:text-ink"
+                tab === t ? "text-paper" : "text-ink/60 dark:text-paper/60 hover:text-ink dark:text-paper dark:hover:text-paper"
               }`}
             >
               {tab === t && (
                 <motion.span
                   layoutId="quickadd-tab-pill"
-                  className="absolute inset-0 bg-ink rounded-lg border-2 border-ink"
+                  className="absolute inset-0 bg-ink rounded-lg border-2 border-ink dark:border-ink-line"
                   transition={{ duration: 0.2 }}
                 />
               )}
@@ -200,13 +204,20 @@ export default function QuickAddPage() {
                 label="Photo of the food/drink"
                 onUploaded={setItemImageUrl}
               />
-              <input name="name" placeholder="Name" required className="w-full border-2 border-ink/15 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-ink transition-colors" />
-              <select name="category" className="w-full border-2 border-ink/15 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-ink transition-colors">
+              <input name="name" placeholder="Name" required className="w-full border-2 border-ink/15 dark:border-ink-line rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-ink dark:border-ink-line transition-colors" />
+              <select name="category" className="w-full border-2 border-ink/15 dark:border-ink-line rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-ink dark:border-ink-line transition-colors">
                 <option value="drink">Drink</option>
                 <option value="food">Food</option>
               </select>
-              <input name="price" type="number" placeholder="Price (KES)" required className="w-full border-2 border-ink/15 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-ink transition-colors" />
-              <input name="stockQty" type="number" placeholder="Starting stock" required className="w-full border-2 border-ink/15 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-ink transition-colors" />
+              <input name="price" type="number" placeholder="Price (KES)" required className="w-full border-2 border-ink/15 dark:border-ink-line rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-ink dark:border-ink-line transition-colors" />
+              <input name="stockQty" type="number" placeholder="Starting stock" required className="w-full border-2 border-ink/15 dark:border-ink-line rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-ink dark:border-ink-line transition-colors" />
+              <textarea
+                name="description"
+                placeholder="Short description (shown to guests on the menu)"
+                rows={2}
+                maxLength={140}
+                className="w-full border-2 border-ink/15 dark:border-ink-line rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-ink dark:border-ink-line transition-colors resize-none"
+              />
             </>
           )}
           {tab === "waiter" && (
@@ -217,26 +228,26 @@ export default function QuickAddPage() {
                 shape="circle"
                 onUploaded={setWaiterImageUrl}
               />
-              <input name="name" placeholder="Name" required className="w-full border-2 border-ink/15 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-ink transition-colors" />
-              <input name="zone" placeholder="Zone (optional)" className="w-full border-2 border-ink/15 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-ink transition-colors" />
+              <input name="name" placeholder="Name" required className="w-full border-2 border-ink/15 dark:border-ink-line rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-ink dark:border-ink-line transition-colors" />
+              <input name="zone" placeholder="Zone (optional)" className="w-full border-2 border-ink/15 dark:border-ink-line rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-ink dark:border-ink-line transition-colors" />
             </>
           )}
           {tab === "table" && (
             <>
-              <input name="tableNumber" type="number" placeholder="Table number" required className="w-full border-2 border-ink/15 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-ink transition-colors" />
-              <input name="zone" placeholder="Zone (optional)" className="w-full border-2 border-ink/15 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-ink transition-colors" />
+              <input name="tableNumber" type="number" placeholder="Table number" required className="w-full border-2 border-ink/15 dark:border-ink-line rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-ink dark:border-ink-line transition-colors" />
+              <input name="zone" placeholder="Zone (optional)" className="w-full border-2 border-ink/15 dark:border-ink-line rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-ink dark:border-ink-line transition-colors" />
             </>
           )}
           <Button type="submit" variant="amber" className="w-full py-2 text-sm">
             Add
           </Button>
-          {status && <p className="text-xs text-ink/50">{status}</p>}
+          {status && <p className="text-xs text-ink/50 dark:text-paper/50">{status}</p>}
         </form>
       </Section>
 
       {tab === "item" && (
         <Section title="Current menu items" accent="copper">
-          <p className="text-xs text-ink/40 mb-3">
+          <p className="text-xs text-ink/40 dark:text-paper/40 mb-3">
             Remove an item once the store is no longer selling it, e.g. after it's permanently out
             of stock. Past and in-progress orders keep their own record regardless.
           </p>
