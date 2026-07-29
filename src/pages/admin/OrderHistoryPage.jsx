@@ -35,7 +35,10 @@ export default function OrderHistoryPage() {
       .catch(() => setError("Could not load order history. Is the backend reachable?"));
   }
 
-  useEffect(load, []); // loads today on mount because start/end are already set
+  useEffect(() => {
+    load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <Section title="Order history" accent="electric">
@@ -70,14 +73,11 @@ export default function OrderHistoryPage() {
         >
           Filter
         </button>
-        {/* Optional: reset to today */}
         <button
           onClick={() => {
             const today = getTodayString();
             setStart(today);
             setEnd(today);
-            // load will pick up the new values on next tick, so call it inside a timeout
-            // or better: use a separate effect. Simpler: just reload after state settles.
             setTimeout(load, 0);
           }}
           className="rounded-lg bg-white dark:bg-ink-soft border-2 border-ink/20 text-ink/70 dark:text-paper/70 font-display font-semibold text-sm px-3 py-1.5 hover:border-ink dark:hover:border-paper transition-colors"
