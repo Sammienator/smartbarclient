@@ -27,38 +27,38 @@ const VIEWS = [
     accent: "amber",
     messages: ["Firing up the menu…", "Setting your table…", "Getting the good stuff ready…"],
   },
-  {
-    to: "/waiter",
-    label: "Waiter app",
-    desc: "Live order queue, close out with a guest's PIN",
-    icon: ClipboardList,
-    accent: "moss",
-    messages: ["You've got this, champion…", "Queuing up your tables…", "Time to make it happen…"],
-  },
-  {
-    to: "/kitchen",
-    label: "Kitchen",
-    desc: "Food orders as they come in, one tap when ready",
-    icon: ChefHat,
-    accent: "copper",
-    messages: ["Great things are cooking…", "Sharpening the knives…", "Let's get plating…"],
-  },
-  {
-    to: "/bar",
-    label: "Drinks / bar",
-    desc: "Same as kitchen, scoped to drinks",
-    icon: Martini,
-    accent: "electric",
-    messages: ["Shaking things up…", "Pouring in the energy…", "Let's mix up something great…"],
-  },
-  {
-    to: "/admin",
-    label: "Admin dashboard",
-    desc: "Sales, reports, stock, and setup",
-    icon: LayoutDashboard,
-    accent: "ink",
-    messages: ["Crunching the numbers…", "Great leaders check in daily…", "Loading your command center…"],
-  },
+  // {
+  //   to: "/waiter",
+  //   label: "Waiter app",
+  //   desc: "Live order queue, close out with a guest's PIN",
+  //   icon: ClipboardList,
+  //   accent: "moss",
+  //   messages: ["You've got this, champion…", "Queuing up your tables…", "Time to make it happen…"],
+  // },
+  // {
+  //   to: "/kitchen",
+  //   label: "Kitchen",
+  //   desc: "Food orders as they come in, one tap when ready",
+  //   icon: ChefHat,
+  //   accent: "copper",
+  //   messages: ["Great things are cooking…", "Sharpening the knives…", "Let's get plating…"],
+  // },
+  // {
+  //   to: "/bar",
+  //   label: "Drinks / bar",
+  //   desc: "Same as kitchen, scoped to drinks",
+  //   icon: Martini,
+  //   accent: "electric",
+  //   messages: ["Shaking things up…", "Pouring in the energy…", "Let's mix up something great…"],
+  // },
+  // {
+  //   to: "/admin",
+  //   label: "Admin dashboard",
+  //   desc: "Sales, reports, stock, and setup",
+  //   icon: LayoutDashboard,
+  //   accent: "ink",
+  //   messages: ["Crunching the numbers…", "Great leaders check in daily…", "Loading your command center…"],
+  // },
 ];
 
 const ACCENT_STYLES = {
@@ -121,18 +121,30 @@ function Landing() {
           transition={{ duration: 0.4 }}
           className="text-center mb-12"
         >
-          <span className="tag-sticker inline-block bg-ink text-paper font-tag text-[10px] uppercase tracking-widest px-3 py-1.5 rounded-md border-2 border-ink shadow-pop-sm mb-4">
-            Smart Bar · Nairobi
+           <span className="tag-sticker inline-block bg-ink text-paper font-tag text-[10px] uppercase tracking-widest px-3 py-1.5 rounded-md border-2 border-ink shadow-pop-sm mb-4">
+            Smart Bar · 
           </span>
+
+          <div className="w-full">
+          <h2 className="text-center font-display font-bold text-ink dark:text-paper text-xl mt-16 mb-1">
+            Why teams love Smart Bar
+          </h2>
+          <p className="text-center text-ink/50 dark:text-paper/50 text-sm max-w-md mx-auto">
+            A quick look at what makes service smoother, for guests and staff alike.
+          </p>
+          <BenefitsCarousel />
+        </div>
+
+         
           <h1 className="font-tag text-3xl sm:text-5xl text-ink dark:text-paper mb-3 leading-tight">
-            Choose your <span className="text-copper">view</span>
+            Click Below to <span className="text-copper">Start!</span>
           </h1>
           <p className="text-ink/50 dark:text-paper/50 text-sm max-w-md mx-auto font-medium">
-            One system, five screens — pick the one you need right now.
+            One system, five screens- Control at your Fingertips!.
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 w-full max-w-4xl">
+        <div className=" items-center row row-cols-1 sm:row-cols-2 lg:row-cols-3 gap-5 w-full max-w-4xl">
           {VIEWS.map((v, i) => {
             const Icon = v.icon;
             const styles = ACCENT_STYLES[v.accent];
@@ -165,15 +177,7 @@ function Landing() {
           })}
         </div>
 
-        <div className="w-full">
-          <h2 className="text-center font-display font-bold text-ink dark:text-paper text-xl mt-16 mb-1">
-            Why teams love Smart Bar
-          </h2>
-          <p className="text-center text-ink/50 dark:text-paper/50 text-sm max-w-md mx-auto">
-            A quick look at what makes service smoother, for guests and staff alike.
-          </p>
-          <BenefitsCarousel />
-        </div>
+        
       </div>
 
       <AnimatePresence>
