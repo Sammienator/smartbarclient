@@ -8,11 +8,20 @@ function timeCell(value) {
   return value ? new Date(value).toLocaleString() : "—";
 }
 
+// Helper: local YYYY-MM-DD (avoids UTC timezone skew)
+function getTodayString() {
+  const d = new Date();
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
 export default function OrderHistoryPage() {
   const [orders, setOrders] = useState([]);
   const [error, setError] = useState("");
-  const [start, setStart] = useState("");
-  const [end, setEnd] = useState("");
+  const [start, setStart] = useState(getTodayString);
+  const [end, setEnd] = useState(getTodayString);
   const [receiptOrder, setReceiptOrder] = useState(null);
 
   function load() {
@@ -25,8 +34,8 @@ export default function OrderHistoryPage() {
       .then((res) => setOrders(asArray(res.data)))
       .catch(() => setError("Could not load order history. Is the backend reachable?"));
   }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(load, []);
+
+  useEffect(load, []); // loads today on mount because start/end are already set
 
   return (
     <Section title="Order history" accent="electric">
@@ -35,17 +44,48 @@ export default function OrderHistoryPage() {
         the kitchen and bar each finished prepping their side, and when the waiter closed it out.
       </p>
       {error && <p className="text-danger text-sm mb-3">{error}</p>}
-      <div className="flex gap-2 mb-4 items-end">
+
+      <div className="flex gap-2 mb-4 items-end flex-wrap">
         <label className="text-xs text-ink/50 dark:text-paper/50">
           From
-          <input type="date" value={start} onChange={(e) => setStart(e.target.value)} className="block border-2 border-ink/15 dark:border-ink-line rounded-lg px-2 py-1 mt-1 focus:outline-none focus:border-ink dark:border-ink-line" />
+          <input
+            type="date"
+            value={start}
+            onChange={(e) => setStart(e.target.value)}
+            className="block border-2 border-ink/15 dark:border-ink-line rounded-lg px-2 py-1 mt-1 focus:outline-none focus:border-ink dark:border-ink-line"
+          />
         </label>
         <label className="text-xs text-ink/50 dark:text-paper/50">
           To
-          <input type="date" value={end} onChange={(e) => setEnd(e.target.value)} className="block border-2 border-ink/15 dark:border-ink-line rounded-lg px-2 py-1 mt-1 focus:outline-none focus:border-ink dark:border-ink-line" />
+          <input
+            type="date"
+            value={end}
+            onChange={(e) => setEnd(e.target.value)}
+            className="block border-2 border-ink/15 dark:border-ink-line rounded-lg px-2 py-1 mt-1 focus:outline-none focus:border-ink dark:border-ink-line"
+          />
         </label>
-        <button onClick={load} className="rounded-lg bg-amber text-ink dark:text-paper border-2 border-ink dark:border-ink-line font-display font-semibold text-sm px-3 py-1.5">Filter</button>
+        <button
+          onClick={load}
+          className="rounded-lg bg-amber text-ink dark:text-paper border-2 border-ink dark:border-ink-line font-display font-semibold text-sm px-3 py-1.5"
+        >
+          Filter
+        </button>
+        {/* Optional: reset to today */}
+        <button
+          onClick={() => {
+            const today = getTodayString();
+            setStart(today);
+            setEnd(today);
+            // load will pick up the new values on next tick, so call it inside a timeout
+            // or better: use a separate effect. Simpler: just reload after state settles.
+            setTimeout(load, 0);
+          }}
+          className="rounded-lg bg-white dark:bg-ink-soft border-2 border-ink/20 text-ink/70 dark:text-paper/70 font-display font-semibold text-sm px-3 py-1.5 hover:border-ink dark:hover:border-paper transition-colors"
+        >
+          Today
+        </button>
       </div>
+
       {orders.length === 0 ? (
         <p className="text-ink/40 dark:text-paper/40 text-sm">No completed orders in this range yet.</p>
       ) : (

@@ -3,7 +3,7 @@ import { ChefHat, Martini } from "lucide-react";
 import api from "../lib/api";
 import { socket } from "../lib/socket";
 import { asArray } from "../lib/asArray";
-import NavBar from "../components/NavBar";
+// import NavBar from "../components/NavBar";
 import StationOrderCard from "../components/StationOrderCard";
 
 const STATION_LABELS = { kitchen: "Kitchen", bar: "Bar" };
@@ -64,7 +64,7 @@ export default function StationApp({ station }) {
   return (
     <div className="min-h-screen bg-paper dark:bg-ink pb-10 relative overflow-hidden transition-colors">
       <div className="pointer-events-none absolute inset-0 urban-dots opacity-[0.04] text-ink dark:text-paper" aria-hidden="true" />
-      <NavBar />
+      {/* <NavBar /> */}
       <div className="h-1.5 urban-gradient" aria-hidden="true" />
       <header className="relative px-5 pt-6 pb-6 flex items-center justify-between">
         <div className="flex items-center gap-3">

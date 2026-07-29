@@ -5,7 +5,7 @@ import api from "../lib/api";
 import { socket } from "../lib/socket";
 import { asArray } from "../lib/asArray";
 import WaiterOrderCard from "../components/WaiterOrderCard";
-import NavBar from "../components/NavBar";
+// import NavBar from "../components/NavBar";
 
 export default function WaiterApp() {
   const [waiters, setWaiters] = useState([]);
@@ -53,7 +53,7 @@ export default function WaiterApp() {
     return (
       <div className="min-h-screen bg-paper dark:bg-ink flex flex-col relative overflow-hidden transition-colors">
         <div className="pointer-events-none absolute inset-0 urban-dots opacity-[0.04] text-ink dark:text-paper" aria-hidden="true" />
-        <NavBar />
+        {/* <NavBar /> */}
         <div className="h-1.5 urban-gradient" aria-hidden="true" />
         <div className="flex-1 flex items-center justify-center p-6 relative">
         <div className="w-full max-w-xs">
@@ -104,7 +104,7 @@ export default function WaiterApp() {
   return (
     <div className="min-h-screen bg-paper dark:bg-ink pb-10 relative overflow-hidden transition-colors">
       <div className="pointer-events-none absolute inset-0 urban-dots opacity-[0.04] text-ink dark:text-paper" aria-hidden="true" />
-      <NavBar />
+      {/* <NavBar /> */}
       <div className="h-1.5 urban-gradient" aria-hidden="true" />
       <header className="relative px-5 pt-6 pb-6 flex items-center justify-between">
         <div className="flex items-center gap-3">
