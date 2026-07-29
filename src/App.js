@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
-import { UtensilsCrossed, ClipboardList, ChefHat, Martini, LayoutDashboard, ArrowRight, Sun, Moon } from "lucide-react";
+import { UtensilsCrossed,  ArrowRight, Sun, Moon } from "lucide-react";
+// import {  ClipboardList, ChefHat, Martini, LayoutDashboard,  } from "lucide-react";
 import GuestApp from "./pages/GuestApp";
 import WaiterApp from "./pages/WaiterApp";
 import StationApp from "./pages/StationApp";
