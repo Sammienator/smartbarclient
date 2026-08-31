@@ -7,13 +7,10 @@ import { asArray } from "../lib/asArray";
 import MenuItemCard from "../components/MenuItemCard";
 import CartBar from "../components/CartBar";
 import PinTicket from "../components/PinTicket";
+import PaymentModal from "../components/PaymentModal";
 import NavBar from "../components/NavBar";
 import Button from "../components/Button";
 
-// Table selection: a guest picks their table from a list rather than
-// scanning a QR code or following a link (no QR code service required).
-// The URL query string (?table=12) still works too, as a shortcut for
-// anyone who does set up QR codes later - it just pre-fills the choice.
 function TablePicker({ tables, loading, onSelect }) {
   return (
     <div className="min-h-screen flex flex-col bg-paper dark:bg-ink relative overflow-hidden transition-colors">
@@ -62,11 +59,6 @@ function TablePicker({ tables, loading, onSelect }) {
   );
 }
 
-// Category selection: after picking a table, a guest chooses whether
-// they're ordering food or drinks. Each choice starts its own cart and,
-// on submit, its own order — and therefore its own PIN — so kitchen and
-// bar delivery times can be tracked independently. Guests can return
-// here after each order to place another (of either category).
 function CategoryPicker({ tableNumber, onSelect, onChangeTable }) {
   return (
     <div className="min-h-screen flex flex-col bg-paper dark:bg-ink relative overflow-hidden transition-colors">
@@ -136,19 +128,20 @@ export default function GuestApp() {
   });
   const [tables, setTables] = useState([]);
   const [tablesLoading, setTablesLoading] = useState(true);
-  const [category, setCategory] = useState(null); // "food" | "drink" | null
+  const [category, setCategory] = useState(null);
   const [menu, setMenu] = useState([]);
   const [cart, setCart] = useState([]);
   const [placing, setPlacing] = useState(false);
   const [error, setError] = useState("");
-  const [confirmedOrder, setConfirmedOrder] = useState(null);
+  const [orderId, setOrderId] = useState(null);
+  const [pendingOrder, setPendingOrder] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     api
       .get("/tables")
       .then((res) => setTables(asArray(res.data)))
-      .catch(() => setError("Could not load tables. Is the backend running?"))
+      .catch(() => setError("Could not load tables"))
       .finally(() => setTablesLoading(false));
   }, []);
 
@@ -158,25 +151,38 @@ export default function GuestApp() {
     api
       .get("/menu")
       .then((res) => setMenu(asArray(res.data)))
-      .catch(() => setError("Could not load the menu. Is the backend running?"))
+      .catch(() => setError("Could not load menu"))
       .finally(() => setLoading(false));
 
     socket.emit("join:guest");
+    
+    function onPaymentConfirmed({ orderId: id, pin, paymentMethod }) {
+      if (id === orderId) {
+        setPendingOrder({ orderId: id, pin, paymentMethod, items: cart, category });
+        setOrderId(null);
+        setCart([]);
+      }
+    }
+
     function onStockUpdate({ menuItemId, stockQty, isAvailable }) {
       setMenu((prev) =>
         prev.map((m) => (m._id === menuItemId ? { ...m, stockQty, isAvailable } : m))
       );
     }
+
     function onMenuRemoved({ menuItemId }) {
       setMenu((prev) => prev.filter((m) => m._id !== menuItemId));
     }
+
+    socket.on("payment:confirmed", onPaymentConfirmed);
     socket.on("stock:update", onStockUpdate);
     socket.on("menu:removed", onMenuRemoved);
     return () => {
+      socket.off("payment:confirmed", onPaymentConfirmed);
       socket.off("stock:update", onStockUpdate);
       socket.off("menu:removed", onMenuRemoved);
     };
-  }, [tableNumber]);
+  }, [tableNumber, orderId, cart, category]);
 
   function selectTable(num) {
     sessionStorage.setItem("smartbar_table_number", String(num));
@@ -216,107 +222,34 @@ export default function GuestApp() {
     setCart((prev) => prev.filter((c) => c.menuItemId !== menuItemId));
   }
 
-  // After Paystack redirect, URL looks like:
-  //   /?table=5&payment=success&reference=sb_...
-  // Verify the payment and reveal the PIN.
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const payment = params.get("payment");
-    const reference = params.get("reference");
-    if (payment !== "success" || !reference) return;
-
-    let cancelled = false;
-    setPlacing(true);
-    setError("");
-
-    (async () => {
-      try {
-        // Poll a few times in case the webhook is slightly slower than the redirect.
-        let data = null;
-        for (let attempt = 0; attempt < 8; attempt++) {
-          try {
-            const res = await api.get(`/payments/verify/${encodeURIComponent(reference)}`);
-            data = res.data;
-            if (data?.pin) break;
-          } catch (err) {
-            if (err.response?.status === 402) {
-              // not paid yet
-            } else {
-              throw err;
-            }
-          }
-          await new Promise((r) => setTimeout(r, 1500));
-        }
-
-        if (cancelled) return;
-
-        if (data && data.pin) {
-          setConfirmedOrder({
-            orderId: data.orderId,
-            tableNumber: data.tableNumber,
-            items: Array.isArray(data.items) ? data.items : [],
-            totalAmount: data.totalAmount,
-            pin: data.pin,
-            category: sessionStorage.getItem("smartbar_last_category") || null,
-          });
-          setCart([]);
-          // Clean the URL so a refresh doesn't re-verify.
-          const clean = new URL(window.location.href);
-          clean.searchParams.delete("payment");
-          clean.searchParams.delete("reference");
-          window.history.replaceState({}, "", clean.pathname + clean.search);
-        } else {
-          setError("Payment is still processing. If you were charged, show your receipt to staff.");
-        }
-      } catch (err) {
-        if (!cancelled) {
-          setError(err.response?.data?.error || "Could not confirm payment. Please contact staff.");
-        }
-      } finally {
-        if (!cancelled) setPlacing(false);
-      }
-    })();
-
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
   async function placeOrder() {
     setError("");
     setPlacing(true);
     try {
-      // Remember category so the PIN ticket can label food vs drink after redirect.
-      if (category) sessionStorage.setItem("smartbar_last_category", category);
-
-      // Build a callback that brings the guest back to this same page with flags.
-      const returnUrl = new URL(window.location.href);
-      returnUrl.searchParams.set("payment", "success");
-      // Paystack will append ?reference=... (or &reference=...) itself when redirecting.
-      // We also pass our own so we can recover if needed.
-      const callbackUrl = returnUrl.toString();
-
-      const res = await api.post("/orders/pay", {
+      const res = await api.post("/orders", {
         tableNumber,
         items: cart.map((c) => ({ menuItemId: c.menuItemId, quantity: c.quantity })),
-        callbackUrl,
       });
-
-      const { authorization_url, reference } = res.data || {};
-      if (!authorization_url) {
-        setError("Could not start payment. Please try again.");
-        return;
+      if (res.data && res.data.orderId) {
+        setOrderId(res.data.orderId);
+      } else {
+        setError("Order creation failed");
       }
-
-      // Stash reference in case Paystack redirect drops our query params.
-      sessionStorage.setItem("smartbar_pending_ref", reference || "");
-
-      // Redirect to Paystack hosted checkout (works reliably in PWAs).
-      window.location.href = authorization_url;
     } catch (err) {
-      setError(err.response?.data?.error || "Could not start payment. Please try again.");
+      setError(err.response?.data?.error || "Could not place order");
+    } finally {
       setPlacing(false);
     }
+  }
+
+  function cancelPayment() {
+    setOrderId(null);
+  }
+
+  function newOrder() {
+    setPendingOrder(null);
+    setCart([]);
+    setCategory(null);
   }
 
   if (!tableNumber) {
@@ -324,13 +257,25 @@ export default function GuestApp() {
   }
 
   if (!category) {
+    return <CategoryPicker tableNumber={tableNumber} onSelect={selectCategory} onChangeTable={changeTable} />;
+  }
+
+  if (pendingOrder) {
+    return <PinTicket order={pendingOrder} onClose={newOrder} paymentMethod={pendingOrder.paymentMethod} />;
+  }
+
+  if (orderId) {
     return (
-      <CategoryPicker tableNumber={tableNumber} onSelect={selectCategory} onChangeTable={changeTable} />
+      <PaymentModal
+        orderId={orderId}
+        totalAmount={cart.reduce((sum, c) => sum + c.price * c.quantity, 0)}
+        onCancel={cancelPayment}
+      />
     );
   }
 
   const categoryLabel = category === "food" ? "Food" : "Drinks";
-  const visibleItems = menu.filter((m) => m.category === category);
+  const visibleItems = menu.filter((m) => m.category === category && m.isAvailable);
 
   return (
     <div className="min-h-screen pb-40 bg-paper dark:bg-ink relative transition-colors">
@@ -354,7 +299,7 @@ export default function GuestApp() {
       </header>
 
       {error && (
-        <div className="mx-5 mb-4 rounded-xl bg-danger/10 text-danger text-sm px-4 py-3 border-2 border-danger/30 font-medium">{error}</div>
+        <div className="mx-5 mb-4 rounded-xl bg-red-50 dark:bg-red-950 text-red-700 dark:text-red-200 text-sm px-4 py-3 border-2 border-red-500/30 font-medium">{error}</div>
       )}
 
       {loading ? (
@@ -376,16 +321,6 @@ export default function GuestApp() {
       )}
 
       <CartBar cart={cart} onRemove={removeFromCart} onPlaceOrder={placeOrder} placing={placing} />
-
-      {confirmedOrder && (
-        <PinTicket
-          order={confirmedOrder}
-          onClose={() => {
-            setConfirmedOrder(null);
-            setCategory(null);
-          }}
-        />
-      )}
     </div>
   );
 }

@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { CreditCard, X } from "lucide-react";
+import { ShoppingBag, X } from "lucide-react";
 
 export default function CartBar({ cart, onRemove, onPlaceOrder, placing }) {
   const total = cart.reduce((sum, c) => sum + c.price * c.quantity, 0);
@@ -44,11 +44,11 @@ export default function CartBar({ cart, onRemove, onPlaceOrder, placing }) {
               className="w-full rounded-xl bg-amber text-ink font-display font-bold py-3.5 flex items-center justify-center gap-2 border-3 border-paper/20 shadow-pop hover:bg-amber-deep hover:text-paper transition-colors disabled:opacity-60"
             >
               {placing ? (
-                "Opening payment…"
+                "Creating order…"
               ) : (
                 <>
-                  <CreditCard size={18} />
-                  Pay &amp; order · {count} item{count === 1 ? "" : "s"} · KES {total}
+                  <ShoppingBag size={18} />
+                  Pay & place · {count} item{count === 1 ? "" : "s"} · KES {total}
                 </>
               )}
             </motion.button>

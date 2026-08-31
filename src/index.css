@@ -2,108 +2,90 @@
 @tailwind components;
 @tailwind utilities;
 
-html, body, #root {
-  height: 100%;
+/* ─── SmartBar design tokens ─────────────────────────────────────────── */
+:root {
+  --paper: #f7f4ef;
+  --paper-dim: #efeae2;
+  --ink: #1a1a1a;
+  --ink-soft: #2a2a2a;
+  --ink-line: #3a3a3a;
+  --amber: #ffc22e;
+  --amber-deep: #e6a800;
+  --copper: #e07a3d;
+  --moss: #00c29a;
+  --electric: #4f7cff;
+  --danger: #e5484d;
 }
 
-body {
-  font-family: 'Inter', system-ui, sans-serif;
-  background-color: #f8f6ef;
-  transition: background-color 0.2s ease, color 0.2s ease;
+@layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont,
+      "Segoe UI", Roboto, sans-serif;
+    background-color: var(--paper);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  .dark body,
+  html.dark body {
+    background-color: var(--ink);
+    color: var(--paper);
+  }
+
+  #root {
+    min-height: 100vh;
+  }
 }
 
-.dark body {
-  background-color: #111114;
-  color: #f8f6ef;
-}
-
+/* Display / tag fonts (loaded via Google Fonts in public/index.html) */
 .font-display {
-  font-family: 'Space Grotesk', 'Inter', system-ui, sans-serif;
+  font-family: "Space Grotesk", "Inter", system-ui, sans-serif;
 }
+
 .font-tag {
-  font-family: 'Bungee', 'Space Grotesk', sans-serif;
-  letter-spacing: 0.01em;
+  font-family: "Space Grotesk", "Inter", system-ui, sans-serif;
+  letter-spacing: 0.04em;
 }
+
 .font-mono {
-  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
-/* Nairobi street-tech texture kit — matatu graffiti energy rendered as
-   flat color blocks, halftone dots and hard "sticker" shadows rather than
-   literal imagery. Loud, but purposeful: seasoning, not the meal. */
-.urban-stripes {
-  background-image: repeating-linear-gradient(
-    -45deg,
-    currentColor 0px,
-    currentColor 3px,
-    transparent 3px,
-    transparent 16px
-  );
-}
-
+/* Soft urban dot pattern used as background texture */
 .urban-dots {
-  background-image: radial-gradient(currentColor 1.5px, transparent 1.5px);
-  background-size: 16px 16px;
+  background-image: radial-gradient(currentColor 1px, transparent 1px);
+  background-size: 14px 14px;
 }
 
 .urban-gradient {
-  background-image: linear-gradient(115deg, #FFC22E 0%, #FF3D7A 55%, #3757FF 100%);
+  background: linear-gradient(135deg, var(--amber), var(--copper));
 }
 
-/* Hard "comic sticker" edge — flat color block, thick outline, offset
-   shadow that shifts on press for a tactile, spray-can-sticker feel. */
-.pop-card {
-  border: 3px solid #111114;
-  box-shadow: 4px 4px 0 0 #111114;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
-}
-.pop-card:active {
-  transform: translate(2px, 2px);
-  box-shadow: 2px 2px 0 0 #111114;
+/* Pop shadows matching the design language */
+.shadow-pop {
+  box-shadow: 3px 3px 0 0 var(--ink);
 }
 
-/* Rotated sticker/tag label, like a spray-stencil badge slapped on a wall. */
-.tag-sticker {
-  display: inline-flex;
-  transform: rotate(-2deg);
+.dark .shadow-pop {
+  box-shadow: 3px 3px 0 0 #555;
 }
 
-/* Diagonal hazard/marker strip, nodding to matatu body livery. */
-.hazard-strip {
-  background-image: repeating-linear-gradient(
-    45deg,
-    #111114 0px,
-    #111114 10px,
-    #FFC22E 10px,
-    #FFC22E 20px
-  );
+.shadow-pop-lg {
+  box-shadow: 5px 5px 0 0 var(--ink);
 }
 
-/* Subtle scanline glow for "smart"/futuristic panels (kitchen, bar, admin). */
-.glow-panel {
-  position: relative;
-}
-.glow-panel::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background-image: linear-gradient(180deg, rgba(55,87,255,0.06) 0%, transparent 40%);
+.dark .shadow-pop-lg {
+  box-shadow: 5px 5px 0 0 #555;
 }
 
-/* Receipt printing: hide the whole app, show only the receipt markup. */
-@media print {
-  body * {
-    visibility: hidden;
-  }
-  #receipt-print-area,
-  #receipt-print-area * {
-    visibility: visible;
-  }
-  #receipt-print-area {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-  }
+/* Border width helpers used in the UI */
+.border-3 {
+  border-width: 3px;
 }

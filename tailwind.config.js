@@ -1,57 +1,39 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+  content: ["./src/**/*.{js,jsx,ts,tsx}", "./public/index.html"],
   darkMode: "class",
-  content: ["./src/**/*.{js,jsx,ts,tsx}"],
   theme: {
     extend: {
-      fontFamily: {
-        display: ["Space Grotesk", "Inter", "system-ui", "sans-serif"],
-        tag: ["Bungee", "Space Grotesk", "sans-serif"],
-        body: ["Inter", "system-ui", "sans-serif"],
-        mono: ["IBM Plex Mono", "ui-monospace", "monospace"],
-      },
       colors: {
-        ink: "#111114",
-        "ink-soft": "#1b1c22",
-        "ink-line": "#2f3038",
-        paper: "#f8f6ef",
-        "paper-dim": "#eeeadd",
+        paper: {
+          DEFAULT: "#f7f4ef",
+          dim: "#efeae2",
+        },
+        ink: {
+          DEFAULT: "#1a1a1a",
+          soft: "#2a2a2a",
+          line: "#3a3a3a",
+        },
         amber: {
-          DEFAULT: "#FFC22E",
-          deep: "#FF8A00",
+          DEFAULT: "#ffc22e",
+          deep: "#e6a800",
         },
-        copper: "#FF3D7A",
-        moss: {
-          DEFAULT: "#00C29A",
-          deep: "#009374",
-        },
-        electric: {
-          DEFAULT: "#3757FF",
-          deep: "#1E33B8",
-        },
-        danger: "#FF3355",
+        copper: "#e07a3d",
+        moss: "#00c29a",
+        electric: "#4f7cff",
+        danger: "#e5484d",
+      },
+      fontFamily: {
+        display: ['"Space Grotesk"', "Inter", "system-ui", "sans-serif"],
+        tag: ['"Space Grotesk"', "Inter", "system-ui", "sans-serif"],
+        mono: ['"JetBrains Mono"', "ui-monospace", "monospace"],
       },
       boxShadow: {
-        pop: "4px 4px 0 0 #111114",
-        "pop-sm": "3px 3px 0 0 #111114",
-        "pop-lg": "6px 6px 0 0 #111114",
+        pop: "3px 3px 0 0 #1a1a1a",
+        "pop-lg": "5px 5px 0 0 #1a1a1a",
       },
       borderWidth: {
         3: "3px",
-      },
-      keyframes: {
-        wiggle: {
-          "0%, 100%": { transform: "rotate(-1deg)" },
-          "50%": { transform: "rotate(1deg)" },
-        },
-        blink: {
-          "0%, 100%": { opacity: 1 },
-          "50%": { opacity: 0.3 },
-        },
-      },
-      animation: {
-        wiggle: "wiggle 1.4s ease-in-out infinite",
-        blink: "blink 1.6s ease-in-out infinite",
       },
     },
   },
