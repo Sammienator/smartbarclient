@@ -6,6 +6,7 @@ import { socket } from "../lib/socket";
 import { asArray } from "../lib/asArray";
 import MenuItemCard from "../components/MenuItemCard";
 import CartBar from "../components/CartBar";
+import PaymentModal from "../components/PaymentModal";
 import PinTicket from "../components/PinTicket";
 import NavBar from "../components/NavBar";
 import Button from "../components/Button";
@@ -143,6 +144,7 @@ export default function GuestApp() {
   const [error, setError] = useState("");
   const [confirmedOrder, setConfirmedOrder] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
 
   useEffect(() => {
     api
@@ -216,105 +218,38 @@ export default function GuestApp() {
     setCart((prev) => prev.filter((c) => c.menuItemId !== menuItemId));
   }
 
-  // After Paystack redirect, URL looks like:
-  //   /?table=5&payment=success&reference=sb_...
-  // Verify the payment and reveal the PIN.
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const payment = params.get("payment");
-    const reference = params.get("reference");
-    if (payment !== "success" || !reference) return;
+  // Step 1: Show payment modal when user clicks "Place Order"
+  function onPlaceOrder() {
+    setShowPaymentModal(true);
+  }
 
-    let cancelled = false;
-    setPlacing(true);
-    setError("");
-
-    (async () => {
-      try {
-        // Poll a few times in case the webhook is slightly slower than the redirect.
-        let data = null;
-        for (let attempt = 0; attempt < 8; attempt++) {
-          try {
-            const res = await api.get(`/payments/verify/${encodeURIComponent(reference)}`);
-            data = res.data;
-            if (data?.pin) break;
-          } catch (err) {
-            if (err.response?.status === 402) {
-              // not paid yet
-            } else {
-              throw err;
-            }
-          }
-          await new Promise((r) => setTimeout(r, 1500));
-        }
-
-        if (cancelled) return;
-
-        if (data && data.pin) {
-          setConfirmedOrder({
-            orderId: data.orderId,
-            tableNumber: data.tableNumber,
-            items: Array.isArray(data.items) ? data.items : [],
-            totalAmount: data.totalAmount,
-            pin: data.pin,
-            category: sessionStorage.getItem("smartbar_last_category") || null,
-          });
-          setCart([]);
-          // Clean the URL so a refresh doesn't re-verify.
-          const clean = new URL(window.location.href);
-          clean.searchParams.delete("payment");
-          clean.searchParams.delete("reference");
-          window.history.replaceState({}, "", clean.pathname + clean.search);
-        } else {
-          setError("Payment is still processing. If you were charged, show your receipt to staff.");
-        }
-      } catch (err) {
-        if (!cancelled) {
-          setError(err.response?.data?.error || "Could not confirm payment. Please contact staff.");
-        }
-      } finally {
-        if (!cancelled) setPlacing(false);
-      }
-    })();
-
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  async function placeOrder() {
+  // Step 2: After payment method and email are collected
+  async function onPaymentConfirm(paymentData) {
     setError("");
     setPlacing(true);
     try {
-      // Remember category so the PIN ticket can label food vs drink after redirect.
-      if (category) sessionStorage.setItem("smartbar_last_category", category);
-
-      // Build a callback that brings the guest back to this same page with flags.
-      const returnUrl = new URL(window.location.href);
-      returnUrl.searchParams.set("payment", "success");
-      // Paystack will append ?reference=... (or &reference=...) itself when redirecting.
-      // We also pass our own so we can recover if needed.
-      const callbackUrl = returnUrl.toString();
-
-      const res = await api.post("/orders/pay", {
+      const res = await api.post("/orders", {
         tableNumber,
         items: cart.map((c) => ({ menuItemId: c.menuItemId, quantity: c.quantity })),
-        callbackUrl,
+        paymentMethod: paymentData.paymentMethod,
+        email: paymentData.email,
       });
-
-      const { authorization_url, reference } = res.data || {};
-      if (!authorization_url) {
-        setError("Could not start payment. Please try again.");
-        return;
+      
+      // Guard against a malformed/unexpected response
+      if (res.data && typeof res.data === "object" && res.data.pin) {
+        setConfirmedOrder({
+          ...res.data,
+          items: Array.isArray(res.data.items) ? res.data.items : [],
+          category,
+        });
+        setCart([]);
+        setShowPaymentModal(false);
+      } else {
+        setError("Order may not have been placed correctly. Please check with a staff member before ordering again.");
       }
-
-      // Stash reference in case Paystack redirect drops our query params.
-      sessionStorage.setItem("smartbar_pending_ref", reference || "");
-
-      // Redirect to Paystack hosted checkout (works reliably in PWAs).
-      window.location.href = authorization_url;
     } catch (err) {
-      setError(err.response?.data?.error || "Could not start payment. Please try again.");
+      setError(err.response?.data?.error || "Could not place the order. Please try again.");
+    } finally {
       setPlacing(false);
     }
   }
@@ -375,7 +310,14 @@ export default function GuestApp() {
         </div>
       )}
 
-      <CartBar cart={cart} onRemove={removeFromCart} onPlaceOrder={placeOrder} placing={placing} />
+      <CartBar cart={cart} onRemove={removeFromCart} onPlaceOrder={onPlaceOrder} placing={placing} />
+
+      <PaymentModal
+        isOpen={showPaymentModal}
+        onClose={() => setShowPaymentModal(false)}
+        onConfirm={onPaymentConfirm}
+        loading={placing}
+      />
 
       {confirmedOrder && (
         <PinTicket
