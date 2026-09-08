@@ -249,21 +249,7 @@ export default function GuestApp() {
     }
   }
 
-  // Step 3: After payment provider redirects back with success
-  // This is called when the payment is confirmed
-  function handlePaymentSuccess(orderData) {
-    if (orderData && orderData.pin) {
-      setConfirmedOrder({
-        ...orderData,
-        items: Array.isArray(orderData.items) ? orderData.items : [],
-        category,
-      });
-      setCart([]);
-      setShowPaymentModal(false);
-    }
-  }
-
-  // Listen for payment success from backend (via Socket.io or callback)
+  // Step 3: Listen for payment success from backend callback
   useEffect(() => {
     // This can be triggered by a URL parameter after payment redirect
     const params = new URLSearchParams(window.location.search);
@@ -272,14 +258,26 @@ export default function GuestApp() {
 
     if (paymentStatus === "success" && orderId) {
       // Fetch the order to show PIN
-      api.get(`/api/orders/${orderId}`)
-        .then((res) => handlePaymentSuccess(res.data))
+      api
+        .get(`/api/orders/${orderId}`)
+        .then((res) => {
+          const orderData = res.data;
+          if (orderData && orderData.pin) {
+            setConfirmedOrder({
+              ...orderData,
+              items: Array.isArray(orderData.items) ? orderData.items : [],
+              category,
+            });
+            setCart([]);
+            setShowPaymentModal(false);
+          }
+        })
         .catch((err) => setError("Could not retrieve order. Please contact support."));
 
       // Clean up URL
       window.history.replaceState({}, document.title, window.location.pathname);
     }
-  }, []);
+  }, [category]);
 
   if (!tableNumber) {
     return <TablePicker tables={tables} loading={tablesLoading} onSelect={selectTable} />;
