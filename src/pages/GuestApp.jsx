@@ -11,10 +11,6 @@ import PinTicket from "../components/PinTicket";
 import NavBar from "../components/NavBar";
 import Button from "../components/Button";
 
-// Table selection: a guest picks their table from a list rather than
-// scanning a QR code or following a link (no QR code service required).
-// The URL query string (?table=12) still works too, as a shortcut for
-// anyone who does set up QR codes later - it just pre-fills the choice.
 function TablePicker({ tables, loading, onSelect }) {
   return (
     <div className="min-h-screen flex flex-col bg-paper dark:bg-ink relative overflow-hidden transition-colors">
@@ -63,11 +59,6 @@ function TablePicker({ tables, loading, onSelect }) {
   );
 }
 
-// Category selection: after picking a table, a guest chooses whether
-// they're ordering food or drinks. Each choice starts its own cart and,
-// on submit, its own order — and therefore its own PIN — so kitchen and
-// bar delivery times can be tracked independently. Guests can return
-// here after each order to place another (of either category).
 function CategoryPicker({ tableNumber, onSelect, onChangeTable }) {
   return (
     <div className="min-h-screen flex flex-col bg-paper dark:bg-ink relative overflow-hidden transition-colors">
@@ -137,10 +128,10 @@ export default function GuestApp() {
   });
   const [tables, setTables] = useState([]);
   const [tablesLoading, setTablesLoading] = useState(true);
-  const [category, setCategory] = useState(null); // "food" | "drink" | null
+  const [category, setCategory] = useState(null);
   const [menu, setMenu] = useState([]);
   const [cart, setCart] = useState([]);
-  const [placing, setPlacing] = useState(false);
+  const [processing, setProcessing] = useState(false);
   const [error, setError] = useState("");
   const [confirmedOrder, setConfirmedOrder] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -218,41 +209,77 @@ export default function GuestApp() {
     setCart((prev) => prev.filter((c) => c.menuItemId !== menuItemId));
   }
 
+  // Calculate total for display
+  const cartTotal = cart.reduce((sum, c) => sum + c.price * c.quantity, 0);
+
   // Step 1: Show payment modal when user clicks "Place Order"
   function onPlaceOrder() {
     setShowPaymentModal(true);
   }
 
-  // Step 2: After payment method and email are collected
+  // Step 2: User confirms payment method - redirect to payment provider
   async function onPaymentConfirm(paymentData) {
     setError("");
-    setPlacing(true);
+    setProcessing(true);
+
     try {
-      const res = await api.post("/orders", {
+      // Call backend to initiate payment
+      const response = await api.post("/api/payments/initiate", {
         tableNumber,
         items: cart.map((c) => ({ menuItemId: c.menuItemId, quantity: c.quantity })),
         paymentMethod: paymentData.paymentMethod,
-        email: paymentData.email,
+        phone: paymentData.phone || null,
+        email: paymentData.email || null,
+        amount: paymentData.amount,
+        category,
       });
-      
-      // Guard against a malformed/unexpected response
-      if (res.data && typeof res.data === "object" && res.data.pin) {
-        setConfirmedOrder({
-          ...res.data,
-          items: Array.isArray(res.data.items) ? res.data.items : [],
-          category,
-        });
-        setCart([]);
-        setShowPaymentModal(false);
+
+      if (response.data && response.data.paymentUrl) {
+        // Redirect to payment provider (Daraja or Paystack)
+        window.location.href = response.data.paymentUrl;
       } else {
-        setError("Order may not have been placed correctly. Please check with a staff member before ordering again.");
+        setError("Could not initiate payment. Please try again.");
+        setShowPaymentModal(false);
       }
     } catch (err) {
-      setError(err.response?.data?.error || "Could not place the order. Please try again.");
+      setError(err.response?.data?.error || "Payment initiation failed. Please try again.");
+      setShowPaymentModal(false);
     } finally {
-      setPlacing(false);
+      setProcessing(false);
     }
   }
+
+  // Step 3: After payment provider redirects back with success
+  // This is called when the payment is confirmed
+  function handlePaymentSuccess(orderData) {
+    if (orderData && orderData.pin) {
+      setConfirmedOrder({
+        ...orderData,
+        items: Array.isArray(orderData.items) ? orderData.items : [],
+        category,
+      });
+      setCart([]);
+      setShowPaymentModal(false);
+    }
+  }
+
+  // Listen for payment success from backend (via Socket.io or callback)
+  useEffect(() => {
+    // This can be triggered by a URL parameter after payment redirect
+    const params = new URLSearchParams(window.location.search);
+    const paymentStatus = params.get("status");
+    const orderId = params.get("order_id");
+
+    if (paymentStatus === "success" && orderId) {
+      // Fetch the order to show PIN
+      api.get(`/api/orders/${orderId}`)
+        .then((res) => handlePaymentSuccess(res.data))
+        .catch((err) => setError("Could not retrieve order. Please contact support."));
+
+      // Clean up URL
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  }, []);
 
   if (!tableNumber) {
     return <TablePicker tables={tables} loading={tablesLoading} onSelect={selectTable} />;
@@ -310,13 +337,14 @@ export default function GuestApp() {
         </div>
       )}
 
-      <CartBar cart={cart} onRemove={removeFromCart} onPlaceOrder={onPlaceOrder} placing={placing} />
+      <CartBar cart={cart} onRemove={removeFromCart} onPlaceOrder={onPlaceOrder} placing={processing} />
 
       <PaymentModal
         isOpen={showPaymentModal}
         onClose={() => setShowPaymentModal(false)}
         onConfirm={onPaymentConfirm}
-        loading={placing}
+        loading={processing}
+        cartTotal={cartTotal}
       />
 
       {confirmedOrder && (
