@@ -1,6 +1,13 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { UtensilsCrossed, Martini, ArrowLeft, ArrowLeftRight } from "lucide-react";
+import {
+  UtensilsCrossed,
+  Martini,
+  ArrowLeft,
+  ArrowLeftRight,
+  Loader,
+  X,
+} from "lucide-react";
 import api from "../lib/api";
 import { socket } from "../lib/socket";
 import { asArray } from "../lib/asArray";
@@ -14,7 +21,10 @@ import Button from "../components/Button";
 function TablePicker({ tables, loading, onSelect }) {
   return (
     <div className="min-h-screen flex flex-col bg-paper dark:bg-ink relative overflow-hidden transition-colors">
-      <div className="pointer-events-none absolute inset-0 urban-dots opacity-[0.04] text-ink dark:text-paper" aria-hidden="true" />
+      <div
+        className="pointer-events-none absolute inset-0 urban-dots opacity-[0.04] text-ink dark:text-paper"
+        aria-hidden="true"
+      />
       <NavBar />
       <div className="h-1.5 urban-gradient" aria-hidden="true" />
       <div className="flex-1 flex items-center justify-center p-6 relative">
@@ -27,13 +37,16 @@ function TablePicker({ tables, loading, onSelect }) {
           <span className="tag-sticker inline-block bg-ink text-paper font-tag text-[10px] uppercase tracking-widest px-3 py-1 rounded-md border-2 border-ink shadow-pop-sm mb-4">
             Smart Bar
           </span>
-          <h1 className="font-display font-bold text-2xl text-ink dark:text-paper mb-6">Which table are you at?</h1>
+          <h1 className="font-display font-bold text-2xl text-ink dark:text-paper mb-6">
+            Which table are you at?
+          </h1>
 
           {loading ? (
             <p className="text-ink/50 dark:text-paper/50 text-sm">Loading tables…</p>
           ) : tables.length === 0 ? (
             <p className="text-ink/50 dark:text-paper/50 text-sm">
-              No tables have been set up yet. Ask a staff member, or add one from the admin dashboard.
+              No tables have been set up yet. Ask a staff member, or add one from
+              the admin dashboard.
             </p>
           ) : (
             <div className="grid grid-cols-4 gap-2.5">
@@ -46,7 +59,7 @@ function TablePicker({ tables, loading, onSelect }) {
                   whileHover={{ y: -3 }}
                   whileTap={{ y: 1, x: 1 }}
                   onClick={() => onSelect(t.tableNumber)}
-                  className="aspect-square rounded-xl border-3 border-ink dark:border-ink-line bg-white dark:bg-ink-soft font-display font-bold text-ink dark:text-paper shadow-pop hover:bg-amber hover:text-ink hover:shadow-pop-lg transition-colors"
+                  className="aspect-square rounded-xl border-3 border-ink dark:border-ink-line bg-white dark:bg-ink-soft shadow-pop hover:shadow-pop-lg font-display font-bold text-lg text-ink dark:text-paper transition-all"
                 >
                   {t.tableNumber}
                 </motion.button>
@@ -62,14 +75,19 @@ function TablePicker({ tables, loading, onSelect }) {
 function CategoryPicker({ tableNumber, onSelect, onChangeTable }) {
   return (
     <div className="min-h-screen flex flex-col bg-paper dark:bg-ink relative overflow-hidden transition-colors">
-      <div className="pointer-events-none absolute inset-0 urban-dots opacity-[0.04] text-ink dark:text-paper" aria-hidden="true" />
+      <div
+        className="pointer-events-none absolute inset-0 urban-dots opacity-[0.04] text-ink dark:text-paper"
+        aria-hidden="true"
+      />
       <NavBar />
       <div className="flex-1 flex flex-col items-center justify-center p-6 relative">
         <div className="w-full max-w-sm text-center">
           <p className="font-mono text-xs uppercase tracking-widest text-ink/40 dark:text-paper/40 mb-2">
             Table {tableNumber}
           </p>
-          <h1 className="font-display font-bold text-2xl text-ink dark:text-paper mb-8">What are you ordering?</h1>
+          <h1 className="font-display font-bold text-2xl text-ink dark:text-paper mb-8">
+            What are you ordering?
+          </h1>
 
           <div className="grid grid-cols-1 gap-4">
             <motion.button
@@ -84,11 +102,16 @@ function CategoryPicker({ tableNumber, onSelect, onChangeTable }) {
                   <UtensilsCrossed size={22} className="text-copper" strokeWidth={2.25} />
                 </div>
                 <div>
-                  <span className="block font-display font-bold text-xl text-ink dark:text-paper mb-1">Food</span>
-                  <span className="block text-ink/50 dark:text-paper/50 text-sm">Order from the kitchen menu</span>
+                  <span className="block font-display font-bold text-xl text-ink dark:text-paper mb-1">
+                    Food
+                  </span>
+                  <span className="block text-ink/50 dark:text-paper/50 text-sm">
+                    Order from the kitchen menu
+                  </span>
                 </div>
               </div>
             </motion.button>
+
             <motion.button
               whileHover={{ y: -3 }}
               whileTap={{ y: 1, x: 1 }}
@@ -101,15 +124,23 @@ function CategoryPicker({ tableNumber, onSelect, onChangeTable }) {
                   <Martini size={22} className="text-electric" strokeWidth={2.25} />
                 </div>
                 <div>
-                  <span className="block font-display font-bold text-xl text-ink dark:text-paper mb-1">Drinks</span>
-                  <span className="block text-ink/50 dark:text-paper/50 text-sm">Order from the bar menu</span>
+                  <span className="block font-display font-bold text-xl text-ink dark:text-paper mb-1">
+                    Drinks
+                  </span>
+                  <span className="block text-ink/50 dark:text-paper/50 text-sm">
+                    Order from the bar menu
+                  </span>
                 </div>
               </div>
             </motion.button>
           </div>
 
           <div className="mt-14">
-            <Button variant="outline" onClick={onChangeTable} className="px-4 py-2 text-sm inline-flex items-center gap-1.5">
+            <Button
+              variant="outline"
+              onClick={onChangeTable}
+              className="px-4 py-2 text-sm inline-flex items-center gap-1.5"
+            >
               <ArrowLeft size={13} /> Change table
             </Button>
           </div>
@@ -137,6 +168,12 @@ export default function GuestApp() {
   const [loading, setLoading] = useState(true);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
 
+  // New payment flow states
+  const [paymentStatus, setPaymentStatus] = useState(null); // null | "pending" | "completed" | "failed"
+  const [paymentError, setPaymentError] = useState("");
+  const [activePaymentId, setActivePaymentId] = useState(null);
+
+  // Load tables
   useEffect(() => {
     api
       .get("/tables")
@@ -145,6 +182,7 @@ export default function GuestApp() {
       .finally(() => setTablesLoading(false));
   }, []);
 
+  // Load menu + socket listeners when table is selected
   useEffect(() => {
     if (!tableNumber) return;
 
@@ -157,7 +195,9 @@ export default function GuestApp() {
     socket.emit("join:guest");
     function onStockUpdate({ menuItemId, stockQty, isAvailable }) {
       setMenu((prev) =>
-        prev.map((m) => (m._id === menuItemId ? { ...m, stockQty, isAvailable } : m))
+        prev.map((m) =>
+          m._id === menuItemId ? { ...m, stockQty, isAvailable } : m
+        )
       );
     }
     function onMenuRemoved({ menuItemId }) {
@@ -170,6 +210,97 @@ export default function GuestApp() {
       socket.off("menu:removed", onMenuRemoved);
     };
   }, [tableNumber]);
+
+  // Handle Paystack redirect success (URL params)
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const status = params.get("status");
+    const orderId = params.get("orderId") || params.get("order_id");
+    const pin = params.get("pin");
+
+    if (status === "success" && (orderId || pin)) {
+      setConfirmedOrder({
+        orderId: orderId || "—",
+        pin: pin || "—",
+        tableNumber,
+        category,
+        items: [],
+        totalAmount: 0,
+      });
+      setCart([]);
+      // Clean URL
+      window.history.replaceState({}, "", window.location.pathname);
+    }
+  }, [tableNumber, category]);
+
+  // Poll payment status while waiting for customer to enter M-Pesa PIN
+  useEffect(() => {
+    if (!activePaymentId || paymentStatus !== "pending") return;
+
+    let cancelled = false;
+    let attempts = 0;
+    const maxAttempts = 40; // ~2 minutes (40 × 3s)
+
+    const interval = setInterval(async () => {
+      if (cancelled) return;
+      attempts += 1;
+
+      try {
+        const res = await api.get(`/payments/${activePaymentId}`);
+        const {
+          status,
+          pin,
+          orderId,
+          failureReason,
+          mpesaReceiptNumber,
+        } = res.data;
+
+        if (status === "completed") {
+          clearInterval(interval);
+          setPaymentStatus("completed");
+
+          // Show the PIN ticket
+          setConfirmedOrder({
+            orderId: orderId || activePaymentId,
+            pin: pin,
+            tableNumber,
+            category,
+            items: cart.map((c) => ({
+              name: c.name,
+              quantity: c.quantity,
+              price: c.price,
+            })),
+            totalAmount: cart.reduce((s, c) => s + c.price * c.quantity, 0),
+            mpesaReceiptNumber,
+          });
+          setCart([]);
+          setActivePaymentId(null);
+        } else if (status === "failed") {
+          clearInterval(interval);
+          setPaymentStatus("failed");
+          setPaymentError(
+            failureReason || "Payment was cancelled or failed."
+          );
+          setActivePaymentId(null);
+        } else if (attempts >= maxAttempts) {
+          clearInterval(interval);
+          setPaymentStatus("failed");
+          setPaymentError(
+            "Payment timed out. If money was deducted, contact the waiter with your M-Pesa message."
+          );
+          setActivePaymentId(null);
+        }
+      } catch (err) {
+        console.error("Polling error:", err);
+        // keep trying until maxAttempts
+      }
+    }, 3000);
+
+    return () => {
+      cancelled = true;
+      clearInterval(interval);
+    };
+  }, [activePaymentId, paymentStatus, cart, tableNumber, category]);
 
   function selectTable(num) {
     sessionStorage.setItem("smartbar_table_number", String(num));
@@ -198,10 +329,20 @@ export default function GuestApp() {
       const existing = prev.find((c) => c.menuItemId === item._id);
       if (existing) {
         return prev.map((c) =>
-          c.menuItemId === item._id ? { ...c, quantity: c.quantity + quantity } : c
+          c.menuItemId === item._id
+            ? { ...c, quantity: c.quantity + quantity }
+            : c
         );
       }
-      return [...prev, { menuItemId: item._id, name: item.name, price: item.price, quantity }];
+      return [
+        ...prev,
+        {
+          menuItemId: item._id,
+          name: item.name,
+          price: item.price,
+          quantity,
+        },
+      ];
     });
   }
 
@@ -209,24 +350,27 @@ export default function GuestApp() {
     setCart((prev) => prev.filter((c) => c.menuItemId !== menuItemId));
   }
 
-  // Calculate total for display
   const cartTotal = cart.reduce((sum, c) => sum + c.price * c.quantity, 0);
 
-  // Step 1: Show payment modal when user clicks "Place Order"
+  // Step 1: Show payment modal
   function onPlaceOrder() {
     setShowPaymentModal(true);
   }
 
-  // Step 2: User confirms payment method - redirect to payment provider
+  // Step 2: User confirms payment method
   async function onPaymentConfirm(paymentData) {
     setError("");
+    setPaymentError("");
     setProcessing(true);
+    setPaymentStatus(null);
 
     try {
-      // Call backend to initiate payment (NO /api prefix needed)
       const response = await api.post("/payments/initiate", {
         tableNumber,
-        items: cart.map((c) => ({ menuItemId: c.menuItemId, quantity: c.quantity })),
+        items: cart.map((c) => ({
+          menuItemId: c.menuItemId,
+          quantity: c.quantity,
+        })),
         paymentMethod: paymentData.paymentMethod,
         phone: paymentData.phone || null,
         email: paymentData.email || null,
@@ -234,58 +378,52 @@ export default function GuestApp() {
         category,
       });
 
-      if (response.data && response.data.paymentUrl) {
-        // Redirect to payment provider (Daraja or Paystack)
-        window.location.href = response.data.paymentUrl;
+      const data = response.data;
+
+      // ---------- CARD (Paystack) – redirect ----------
+      if (data.paymentUrl) {
+        window.location.href = data.paymentUrl;
+        return;
+      }
+
+      // ---------- M-PESA STK – poll for result ----------
+      if (data.success && data.paymentId) {
+        setActivePaymentId(data.paymentId);
+        setPaymentStatus("pending");
+        setShowPaymentModal(false);
       } else {
-        setError("Could not initiate payment. Please try again.");
+        setError(data.error || "Could not initiate payment. Please try again.");
         setShowPaymentModal(false);
       }
     } catch (err) {
-      setError(err.response?.data?.error || "Payment initiation failed. Please try again.");
+      setError(
+        err.response?.data?.error ||
+          "Payment initiation failed. Please try again."
+      );
       setShowPaymentModal(false);
     } finally {
       setProcessing(false);
     }
   }
 
-  // Step 3: Listen for payment success from backend callback
-  useEffect(() => {
-    // This can be triggered by a URL parameter after payment redirect
-    const params = new URLSearchParams(window.location.search);
-    const paymentStatus = params.get("status");
-    const orderId = params.get("order_id");
-
-    if (paymentStatus === "success" && orderId) {
-      // Fetch the order to show PIN (NO /api prefix needed)
-      api
-        .get(`/orders/${orderId}`)
-        .then((res) => {
-          const orderData = res.data;
-          if (orderData && orderData.pin) {
-            setConfirmedOrder({
-              ...orderData,
-              items: Array.isArray(orderData.items) ? orderData.items : [],
-              category,
-            });
-            setCart([]);
-            setShowPaymentModal(false);
-          }
-        })
-        .catch((err) => setError("Could not retrieve order. Please contact support."));
-
-      // Clean up URL
-      window.history.replaceState({}, document.title, window.location.pathname);
-    }
-  }, [category]);
-
+  // ---------- Render guards ----------
   if (!tableNumber) {
-    return <TablePicker tables={tables} loading={tablesLoading} onSelect={selectTable} />;
+    return (
+      <TablePicker
+        tables={tables}
+        loading={tablesLoading}
+        onSelect={selectTable}
+      />
+    );
   }
 
   if (!category) {
     return (
-      <CategoryPicker tableNumber={tableNumber} onSelect={selectCategory} onChangeTable={changeTable} />
+      <CategoryPicker
+        tableNumber={tableNumber}
+        onSelect={selectCategory}
+        onChangeTable={changeTable}
+      />
     );
   }
 
@@ -294,15 +432,21 @@ export default function GuestApp() {
 
   return (
     <div className="min-h-screen pb-40 bg-paper dark:bg-ink relative transition-colors">
-      <div className="pointer-events-none absolute inset-0 urban-dots opacity-[0.03] text-ink dark:text-paper" aria-hidden="true" />
+      <div
+        className="pointer-events-none absolute inset-0 urban-dots opacity-[0.03] text-ink dark:text-paper"
+        aria-hidden="true"
+      />
       <NavBar />
       <div className="h-1.5 urban-gradient" aria-hidden="true" />
+
       <header className="relative px-5 pt-6 pb-6 flex items-start justify-between gap-3">
         <div>
           <span className="tag-sticker inline-block bg-ink text-paper font-mono text-[10px] uppercase tracking-widest px-2.5 py-1 rounded-md border-2 border-ink mb-2">
             Table {tableNumber} · {categoryLabel}
           </span>
-          <h1 className="font-tag text-3xl text-ink dark:text-paper mt-1">Smart Bar</h1>
+          <h1 className="font-tag text-3xl text-ink dark:text-paper mt-1">
+            Smart Bar
+          </h1>
         </div>
         <Button
           variant="outline"
@@ -314,15 +458,21 @@ export default function GuestApp() {
       </header>
 
       {error && (
-        <div className="mx-5 mb-4 rounded-xl bg-danger/10 text-danger text-sm px-4 py-3 border-2 border-danger/30 font-medium">{error}</div>
+        <div className="mx-5 mb-4 rounded-xl bg-danger/10 text-danger text-sm px-4 py-3 border-2 border-danger/30 font-medium">
+          {error}
+        </div>
       )}
 
       {loading ? (
-        <p className="px-5 text-ink/50 dark:text-paper/50 text-sm">Loading menu…</p>
+        <p className="px-5 text-ink/50 dark:text-paper/50 text-sm">
+          Loading menu…
+        </p>
       ) : (
         <div className="px-5 relative">
           {visibleItems.length === 0 ? (
-            <p className="text-ink/50 dark:text-paper/50 text-sm">Nothing available in this menu right now.</p>
+            <p className="text-ink/50 dark:text-paper/50 text-sm">
+              Nothing available in this menu right now.
+            </p>
           ) : (
             <div className="grid grid-cols-2 gap-4">
               <AnimatePresence mode="popLayout">
@@ -335,8 +485,14 @@ export default function GuestApp() {
         </div>
       )}
 
-      <CartBar cart={cart} onRemove={removeFromCart} onPlaceOrder={onPlaceOrder} placing={processing} />
+      <CartBar
+        cart={cart}
+        onRemove={removeFromCart}
+        onPlaceOrder={onPlaceOrder}
+        placing={processing}
+      />
 
+      {/* Payment method selection modal */}
       <PaymentModal
         isOpen={showPaymentModal}
         onClose={() => setShowPaymentModal(false)}
@@ -345,12 +501,81 @@ export default function GuestApp() {
         cartTotal={cartTotal}
       />
 
+      {/* Waiting for customer to enter M-Pesa PIN */}
+      {paymentStatus === "pending" && (
+        <div className="fixed inset-0 bg-ink/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="bg-paper w-full max-w-sm rounded-2xl border-3 border-ink p-6 text-center shadow-2xl">
+            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-green-500/15 border-2 border-green-500 flex items-center justify-center">
+              <Loader className="animate-spin text-green-600" size={28} />
+            </div>
+            <h3 className="font-display font-bold text-xl text-ink mb-2">
+              Check your phone
+            </h3>
+            <p className="text-ink/70 text-sm mb-4">
+              An M-Pesa prompt has been sent. Enter your PIN to complete the
+              payment.
+            </p>
+            <p className="text-ink/40 text-xs">
+              This screen will update automatically…
+            </p>
+            <button
+              onClick={() => {
+                setPaymentStatus(null);
+                setActivePaymentId(null);
+              }}
+              className="mt-6 text-sm text-ink/50 underline"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Payment failed */}
+      {paymentStatus === "failed" && (
+        <div className="fixed inset-0 bg-ink/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="bg-paper w-full max-w-sm rounded-2xl border-3 border-ink p-6 text-center shadow-2xl">
+            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-red-500/15 border-2 border-red-500 flex items-center justify-center">
+              <X className="text-red-600" size={28} />
+            </div>
+            <h3 className="font-display font-bold text-xl text-ink mb-2">
+              Payment Failed
+            </h3>
+            <p className="text-ink/70 text-sm mb-6">
+              {paymentError ||
+                "The payment was cancelled or could not be completed."}
+            </p>
+            <button
+              onClick={() => {
+                setPaymentStatus(null);
+                setPaymentError("");
+                setShowPaymentModal(true);
+              }}
+              className="w-full rounded-xl bg-amber text-ink font-bold py-3 border-3 border-ink"
+            >
+              Try Again
+            </button>
+            <button
+              onClick={() => {
+                setPaymentStatus(null);
+                setPaymentError("");
+              }}
+              className="mt-3 text-sm text-ink/50 underline"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Success – PIN Ticket */}
       {confirmedOrder && (
         <PinTicket
           order={confirmedOrder}
           onClose={() => {
             setConfirmedOrder(null);
             setCategory(null);
+            setPaymentStatus(null);
           }}
         />
       )}
