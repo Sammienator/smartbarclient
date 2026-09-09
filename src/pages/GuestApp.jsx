@@ -223,8 +223,8 @@ export default function GuestApp() {
     setProcessing(true);
 
     try {
-      // Call backend to initiate payment
-      const response = await api.post("/api/payments/initiate", {
+      // Call backend to initiate payment (NO /api prefix needed)
+      const response = await api.post("/payments/initiate", {
         tableNumber,
         items: cart.map((c) => ({ menuItemId: c.menuItemId, quantity: c.quantity })),
         paymentMethod: paymentData.paymentMethod,
@@ -257,9 +257,9 @@ export default function GuestApp() {
     const orderId = params.get("order_id");
 
     if (paymentStatus === "success" && orderId) {
-      // Fetch the order to show PIN
+      // Fetch the order to show PIN (NO /api prefix needed)
       api
-        .get(`/api/orders/${orderId}`)
+        .get(`/orders/${orderId}`)
         .then((res) => {
           const orderData = res.data;
           if (orderData && orderData.pin) {
